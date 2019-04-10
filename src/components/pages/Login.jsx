@@ -13,12 +13,13 @@ import * as notificationUtil from "@/action/common/openNotification";
 const FormItem = Form.Item;
 
 class Login extends React.Component {
-  componentDidMount() {
+  componentWillMount() {
     let reg = new RegExp('"', "g");
     let session_id = localStorage.getItem("session_id");
     if (!session_id) {
       return;
     }
+    console.log("登录界面做了一次check");
     session_id = session_id.replace(reg, "");
     console.log("checkLogin:", session_id);
     if (!session_id) {
@@ -52,13 +53,15 @@ class Login extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const {
-      account,
       location: { state }
     } = this.props;
-    if (account.isLogin) {
+    if (localStorage.getItem("session_id")) {
       if (state && state.from) {
         return <Redirect to={state.from} />;
       }
+      return <Redirect to="/" />;
+    }
+    if(localStorage.getItem("session_id")){
       return <Redirect to="/" />;
     }
     return (

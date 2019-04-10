@@ -27,7 +27,7 @@ const data = [{
 }];
 
 class SortTable extends React.Component {
-    state = {
+    initialState = {
         filteredInfo: null,
         sortedInfo: null,
     };
@@ -56,7 +56,7 @@ class SortTable extends React.Component {
         });
     };
     render() {
-        let { sortedInfo, filteredInfo } = this.state;
+        let { sortedInfo, filteredInfo } = this.initialState;
         sortedInfo = sortedInfo || {};
         filteredInfo = filteredInfo || {};
         const columns = [{

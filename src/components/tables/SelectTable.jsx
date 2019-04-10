@@ -26,7 +26,7 @@ for (let i = 0; i < 46; i++) {
 }
 
 class SelectTable extends React.Component {
-    state = {
+    initialState = {
         selectedRowKeys: [], // Check here to configure the default column
     };
     onSelectChange = (selectedRowKeys) => {
@@ -34,7 +34,7 @@ class SelectTable extends React.Component {
         this.setState({ selectedRowKeys });
     };
     render() {
-        const { selectedRowKeys } = this.state;
+        const { selectedRowKeys } = this.initialState;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,

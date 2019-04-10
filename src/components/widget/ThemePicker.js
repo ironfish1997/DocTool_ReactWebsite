@@ -4,13 +4,13 @@ import { SketchPicker } from 'react-color';
 import classNames from 'classnames';
 
 class ThemePicker extends Component {
-    state = {
+    initialState = {
         switcherOn: false,
         background: localStorage.getItem('@primary-color') || '#313653',
     }
     _switcherOn = () => {
         this.setState({
-            switcherOn: !this.state.switcherOn
+            switcherOn: !this.initialState.switcherOn
         })
     };
     _handleChangeComplete = color => {
@@ -22,7 +22,7 @@ class ThemePicker extends Component {
         })
     };
     render() {
-        const { switcherOn, background } = this.state;
+        const { switcherOn, background } = this.initialState;
         return (
             <div className={classNames('switcher dark-white', { active: switcherOn })}>
                 <span className="sw-btn dark-white" onClick={this._switcherOn}>

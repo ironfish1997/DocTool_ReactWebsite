@@ -27,7 +27,7 @@ const data = [{
 }];
 
 class SearchTable extends React.Component {
-    state = {
+    initialState = {
         filterDropdownVisible: false,
         data,
         searchText: '',
@@ -37,7 +37,7 @@ class SearchTable extends React.Component {
         this.setState({ searchText: e.target.value });
     };
     onSearch = () => {
-        const { searchText } = this.state;
+        const { searchText } = this.initialState;
         const reg = new RegExp(searchText, 'gi');
         this.setState({
             filterDropdownVisible: false,
@@ -70,15 +70,15 @@ class SearchTable extends React.Component {
                     <Input
                         ref={ele => this.searchInput = ele}
                         placeholder="Search name"
-                        value={this.state.searchText}
+                        value={this.initialState.searchText}
                         onChange={this.onInputChange}
                         onPressEnter={this.onSearch}
                     />
                     <Button type="primary" onClick={this.onSearch}>Search</Button>
                 </div>
             ),
-            filterIcon: <Icon type="smile-o" style={{ color: this.state.filtered ? '#108ee9' : '#aaa' }} />,
-            filterDropdownVisible: this.state.filterDropdownVisible,
+            filterIcon: <Icon type="smile-o" style={{ color: this.initialState.filtered ? '#108ee9' : '#aaa' }} />,
+            filterDropdownVisible: this.initialState.filterDropdownVisible,
             onFilterDropdownVisibleChange: visible => this.setState({ filterDropdownVisible: visible }, () => this.searchInput.focus()),
         }, {
             title: 'Age',
@@ -99,7 +99,7 @@ class SearchTable extends React.Component {
         }];
         return (
             <div>
-                <Table columns={columns} dataSource={this.state.data} />
+                <Table columns={columns} dataSource={this.initialState.data} />
                 <style>{`
                     .custom-filter-dropdown {
                       padding: 8px;

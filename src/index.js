@@ -10,6 +10,7 @@ import Page from "./Page";
 import "./style/lib/animate.css";
 import "./style/antd/index.less";
 import "./style/index.less";
+import "./style/theme.less";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 // const sagaMiddleware = createSagaMiddleware();

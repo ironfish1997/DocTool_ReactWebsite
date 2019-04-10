@@ -6,23 +6,9 @@ import { Layout } from "antd";
 import { withRouter } from "react-router-dom";
 import routes from "../routes/config";
 import SiderMenu from "./SiderMenu";
-
 const { Sider } = Layout;
 
 class SiderCustom extends Component {
-  static getDerivedStateFromProps(props, state) {
-    if (props.collapsed !== state.collapsed) {
-      const state1 = SiderCustom.setMenuOpen(props);
-      const state2 = SiderCustom.onCollapse(props.collapsed);
-      return {
-        ...state1,
-        ...state2,
-        firstHide: state.collapsed !== props.collapsed && props.collapsed, // 两个不等时赋值props属性值否则为false
-        openKey: state.openKey || (!props.collapsed && state1.openKey)
-      };
-    }
-    return null;
-  }
   static setMenuOpen = props => {
     const { pathname } = props.location;
     return {
@@ -30,6 +16,7 @@ class SiderCustom extends Component {
       selectedKey: pathname
     };
   };
+
   static onCollapse = collapsed => {
     console.log(collapsed);
     return {
@@ -39,25 +26,23 @@ class SiderCustom extends Component {
     };
   };
   state = {
-    collapsed: false,
+    collapsed: true,
     mode: "inline",
     openKey: "",
     selectedKey: "",
     firstHide: true // 点击收缩菜单，第一次隐藏展开子菜单，openMenu时恢复
   };
   componentDidMount() {
-    // this.setMenuOpen(this.props);
     const state = SiderCustom.setMenuOpen(this.props);
     this.setState(state);
   }
+
   menuClick = e => {
     this.setState({
       selectedKey: e.key
     });
-    console.log(this.state);
-    const { popoverHide } = this.props; // 响应式布局控制小屏幕点击菜单时隐藏菜单操作
-    popoverHide && popoverHide();
   };
+
   openMenu = v => {
     console.log(v);
     this.setState({
@@ -65,32 +50,40 @@ class SiderCustom extends Component {
       firstHide: false
     });
   };
+
   render() {
     return (
       <Sider
         trigger={null}
         breakpoint="lg"
-        collapsed={this.props.collapsed}
+        collapsed={this.state.collapsed}
         style={{ overflowY: "auto" }}
+        onMouseEnter={() => {
+          this.setState({ collapsed: false });
+        }}
+        onMouseLeave={() => {
+          this.setState({ collapsed: true });
+        }}
       >
         <div className="logo">
-          {/* <img
+          <img
             alt="logo"
-            href={process.env.PUBLIC_URL + "/images/icons/icon-128x128.png"}
-          /> */}
+            src={process.env.PUBLIC_URL + "/images/icons/doc-icon.png"}
+            width="100%"
+            height="100%"
+          />
         </div>
         <SiderMenu
           menus={routes.menus}
           onClick={this.menuClick}
+          inlineCollapsed
           mode="inline"
-          selectedKeys={[this.state.selectedKey]}
-          openKeys={this.state.firstHide ? null : [this.state.openKey]}
           onOpenChange={this.openMenu}
         />
         <style>
           {`
                     #nprogress .spinner{
-                        left: ${this.state.collapsed ? "70px" : "206px"};
+                        left: "70px";
                         right: 0 !important;
                     }
                     `}

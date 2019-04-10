@@ -13,6 +13,8 @@ export const FLUSH_ACCOUNT = "FLUSH_ACCOUNT";
 export const ACCOUNT_REGISTER_SUCCESS = "ACCOUNT_REGISTER_SUCCESS";
 export const ACCOUNT_REGISTER_FAILED = "ACCOUNT_REGISTER_FAILED";
 
+export const ACCOUNT_UPDATE_SUCCESS = "ACCOUNT_UPDATE_SUCCESS";
+
 //===程序状态相关action===========================================
 
 export const PROGRAM_SETMOBILE = "PROGRAM_SETMOBILE";

@@ -1,6 +1,6 @@
 import * as type from "./type";
 import { httpUtil } from "../utils";
-import { login_url, check_login_url, account_url } from "../config/api_path";
+import * as api_path from "../config/api_path";
 
 /**
  * client端账号登录失败
@@ -68,29 +68,39 @@ export const registerFailed = error => ({
   error: error
 });
 
+export const updateSuccess = data => ({
+  type: type.ACCOUNT_UPDATE_SUCCESS,
+  data: data
+});
+/**
+ * 验证当前session_id是否已过期，如果过期，返回失败数据；如果未过期，保存用户数据到store
+ * @param {string} session_id
+ */
 export const checkLogin = (session_id = "") => dispatch => {
-  console.log("checkLogin,session_id:", session_id);
-  const requestHeader = {
-    session_id: session_id
-  };
   return new Promise((resolve, reject) => {
-    httpUtil(check_login_url, null, requestHeader, "POST").then(response => {
-      response.json().then(data => {
-        if (data.rtn === 0) {
-          let returnData = {};
-          try {
-            returnData = data;
-          } catch (error) {
-            returnData = {};
+    console.log("checkLogin,session_id:", session_id);
+    const requestHeader = {
+      session_id: session_id
+    };
+    httpUtil(api_path.check_login_url, null, requestHeader, "POST").then(
+      response => {
+        response.json().then(response_json => {
+          if (response_json.rtn === 0) {
+            let returnData = {};
+            try {
+              returnData = response_json.data;
+            } catch (error) {
+              returnData = {};
+            }
+            dispatch(logincheckSuccess(returnData));
+            resolve("check ok");
+          } else {
+            dispatch(logincheckFailed(response_json.msg));
+            reject("check failed");
           }
-          dispatch(logincheckSuccess(returnData));
-          resolve();
-        } else {
-          dispatch(logincheckFailed(data));
-          reject();
-        }
-      });
-    });
+        });
+      }
+    );
   });
 };
 
@@ -110,19 +120,19 @@ export const doLogin = (account_id, account_password, remember) => dispatch => {
     remember: remember
   };
   return new Promise((resolve, reject) => {
-    httpUtil(login_url, requestParams, requestHeader, "POST").then(
+    httpUtil(api_path.login_url, requestParams, requestHeader, "POST").then(
       response => {
-        response.json().then(data => {
-          if (data.rtn === 0) {
-            dispatch(loginSuccess(data));
+        response.json().then(response_json => {
+          if (response_json.rtn === 0) {
+            dispatch(loginSuccess(response_json.data));
             resolve("登录成功");
           } else {
             //如果是账号密码有误，则返回码是-10030
             let msg = "登录失败";
-            if (data.rtn === -10030) {
+            if (response_json.rtn === -10030) {
               msg = "密码或账号有误";
             }
-            dispatch(loginFailed(data));
+            dispatch(loginFailed(response_json.msg));
             reject(msg);
           }
         });
@@ -151,43 +161,13 @@ export const doRegister = data => dispatch => {
       reject("lack of information");
       return;
     }
-    let area = "";
-    data.area.map(x => {
-      area = area + x;
-      return 0;
-    });
     let account = {
       account_id: data.account_id,
       account_password: data.account_password,
       name: data.name,
-      area: area,
+      area: data.area,
       account_permission: [
-        //发送公共通知
-        "common_notification",
-        //登录账户
-        "login_account",
-        //新增病人信息
-        "add_patient",
-        //更新病人信息
-        "update_patient",
-        //删除病人信息
-        "delete_patient",
-        //查询病人信息
-        "query_patient",
-        //新增辖区居民
-        "add_resident",
-        //更新辖区居民
-        "update_resident",
-        //删除辖区居民
-        "delete_resident",
-        //查询辖区居民
-        "query_resident",
-        //新增药物订单记录
-        "add_item",
-        //更新药物订单记录
-        "update_item",
-        //删除药物订单记录
-        "delete_item"
+        "doctor_auth"
       ],
       contacts: {
         wechat: data.wechat,
@@ -197,19 +177,19 @@ export const doRegister = data => dispatch => {
       }
     };
     console.log("account==>", account);
-    httpUtil(account_url, account, null, "POST").then(
+    httpUtil(api_path.account_url, account, null, "POST").then(
       response => {
-        response.json().then(data => {
-          if (data.rtn === 0) {
-            dispatch(registerSuccess(data));
+        response.json().then(response_json => {
+          if (response_json.rtn === 0) {
+            dispatch(registerSuccess(response_json.data));
             resolve("注册成功");
           } else {
             //如果是账号密码有误，则返回码是-10030
             let msg = "注册失败";
-            if (data.rtn === -10034) {
+            if (response_json.rtn === -10034) {
               msg = "账号已经被注册";
             }
-            dispatch(registerFailed(data));
+            dispatch(registerFailed(response_json.msg));
             reject(msg);
           }
         });
@@ -222,6 +202,46 @@ export const doRegister = data => dispatch => {
   });
 };
 
+/**
+ * 更新用户对象
+ * @param {object} updated_info
+ * @param {string} session_id
+ */
+export const doUpdate = (updated_info, session_id) => dispatch => {
+  return new Promise((resolve, reject) => {
+    //如果未传入原始用户和修改后的用户信息或session_id，直接返回
+    if (updated_info === null || session_id === null) {
+      return reject("缺少信息");
+    }
+    //输出数据
+    console.log("修改账户，需要修改的信息为==>", updated_info);
+    let header = {
+      session_id: session_id
+    };
+    httpUtil(api_path.account_url, updated_info, header, "PUT").then(
+      response => {
+        response.json().then(response_json => {
+          if (response_json.rtn !== 0) {
+            console.error("update user info failed===>", response_json.msg);
+            return reject("修改信息失败");
+          } else {
+            console.log("update user info success!===>", response_json.msg);
+            dispatch(updateSuccess(response_json.data));
+            return resolve("修改信息成功");
+          }
+        });
+      },
+      error => {
+        console.log("update user info failed!===>", error);
+        return resolve("修改信息失败");
+      }
+    );
+  });
+};
+
+/**
+ * 注销账户
+ */
 export const logout = () => {
   flushAccount();
 };

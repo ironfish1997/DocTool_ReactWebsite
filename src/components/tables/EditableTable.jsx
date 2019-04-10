@@ -70,7 +70,7 @@ class EditableCell extends React.Component {
 export default class EditableTable extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { data, editingKey: '' };
+		this.initialState = { data, editingKey: '' };
 		this.columns = [
 			{
 				title: 'name',
@@ -126,7 +126,7 @@ export default class EditableTable extends React.Component {
 		];
 	}
 	isEditing = (record) => {
-		return record.key === this.state.editingKey;
+		return record.key === this.initialState.editingKey;
 	};
 	edit(key) {
 		this.setState({ editingKey: key });
@@ -136,7 +136,7 @@ export default class EditableTable extends React.Component {
 			if (error) {
 				return;
 			}
-			const newData = [...this.state.data];
+			const newData = [...this.initialState.data];
 			const index = newData.findIndex(item => key === item.key);
 			if (index > -1) {
 				const item = newData[index];
@@ -182,7 +182,7 @@ export default class EditableTable extends React.Component {
 			<Table
 				components={components}
 				bordered
-				dataSource={this.state.data}
+				dataSource={this.initialState.data}
 				columns={columns}
 				rowClassName="editable-row"
 			/>

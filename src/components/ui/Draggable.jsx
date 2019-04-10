@@ -7,7 +7,7 @@ import BreadcrumbCustom from '../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 
 class Drags extends React.Component {
-    state = {
+    initialState = {
         activeDrags: 0,
         deltaPosition: {
             x: 0, y: 0
@@ -17,15 +17,15 @@ class Drags extends React.Component {
         }
     };
     onStart = () => {
-        let { activeDrags } = this.state;
+        let { activeDrags } = this.initialState;
         this.setState({ activeDrags: ++activeDrags });
     };
     onStop = () => {
-        let { activeDrags } = this.state;
+        let { activeDrags } = this.initialState;
         this.setState({ activeDrags: --activeDrags });
     };
     handleDrag = (e, ui) => {
-        const {x, y} = this.state.deltaPosition;
+        const {x, y} = this.initialState.deltaPosition;
         this.setState({
             deltaPosition: {
                 x: x + ui.deltaX,
@@ -35,7 +35,7 @@ class Drags extends React.Component {
     };
     render() {
         const dragHandlers = {onStart: this.onStart, onStop: this.onStop};
-        const {deltaPosition} = this.state;
+        const {deltaPosition} = this.initialState;
         return (
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="拖拽" />

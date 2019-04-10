@@ -7,7 +7,7 @@ import BreadcrumbCustom from '../BreadcrumbCustom';
 const confirm = Modal.confirm;
 
 class S extends Component {
-    state = {
+    initialState = {
         visible: false,
         ModalText2: 'Content of the modal dialog',
         visible2: false,
@@ -128,7 +128,7 @@ class S extends Component {
                             <Card bordered={false}>
                                 <p>
                                     <Button type="primary" onClick={this.showModal}>基本用法</Button>
-                                    <Modal title="Basic Modal" visible={this.state.visible}
+                                    <Modal title="Basic Modal" visible={this.initialState.visible}
                                            onOk={this.handleOk} onCancel={this.handleCancel}
                                     >
                                         <p>some contents...</p>
@@ -139,12 +139,12 @@ class S extends Component {
                                 <p>
                                     <Button type="primary" onClick={this.showModal2}>异步关闭</Button>
                                     <Modal title="Title of the modal dialog"
-                                           visible={this.state.visible2}
+                                           visible={this.initialState.visible2}
                                            onOk={this.handleOk2}
-                                           confirmLoading={this.state.confirmLoading2}
+                                           confirmLoading={this.initialState.confirmLoading2}
                                            onCancel={this.handleCancel2}
                                     >
-                                        <p>{this.state.ModalText2}</p>
+                                        <p>{this.initialState.ModalText2}</p>
                                     </Modal>
                                 </p>
                                 <p>
@@ -152,13 +152,13 @@ class S extends Component {
                                         自定义页脚
                                     </Button>
                                     <Modal
-                                        visible={this.state.visible3}
+                                        visible={this.initialState.visible3}
                                         title="Title"
                                         onOk={this.handleOk3}
                                         onCancel={this.handleCancel3}
                                         footer={[
                                             <Button key="back" size="large" onClick={this.handleCancel3}>Return</Button>,
-                                            <Button key="submit" type="primary" size="large" loading={this.state.loading3} onClick={this.handleOk3}>
+                                            <Button key="submit" type="primary" size="large" loading={this.initialState.loading3} onClick={this.handleOk3}>
                                                 Submit
                                             </Button>,
                                         ]}
@@ -186,7 +186,7 @@ class S extends Component {
                                     <Modal
                                         title="20px to Top"
                                         style={{ top: 20 }}
-                                        visible={this.state.modal1Visible}
+                                        visible={this.initialState.modal1Visible}
                                         onOk={() => this.setModal1Visible(false)}
                                         onCancel={() => this.setModal1Visible(false)}
                                     >
@@ -199,7 +199,7 @@ class S extends Component {
                                     <Modal
                                         title="Vertically centered modal dialog"
                                         wrapClassName="vertical-center-modal"
-                                        visible={this.state.modal2Visible}
+                                        visible={this.initialState.modal2Visible}
                                         onOk={() => this.setModal2Visible(false)}
                                         onCancel={() => this.setModal2Visible(false)}
                                     >

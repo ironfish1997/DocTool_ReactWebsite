@@ -8,7 +8,7 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
 class Spins extends React.Component {
-    state = { loading: false };
+    initialState = { loading: false };
     toggle = (value) => {
         this.setState({ loading: value });
     };
@@ -65,8 +65,8 @@ class Spins extends React.Component {
                     <Col className="gutter-row" md={12}>
                         <div className="gutter-box">
                             <Card bordered={false}>
-                                <Spin spinning={this.state.loading}>{container}</Spin>
-                                Loading state：<Switch checked={this.state.loading} onChange={this.toggle} />
+                                <Spin spinning={this.initialState.loading}>{container}</Spin>
+                                Loading state：<Switch checked={this.initialState.loading} onChange={this.toggle} />
                             </Card>
                         </div>
                     </Col>

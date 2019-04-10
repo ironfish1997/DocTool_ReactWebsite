@@ -1,4 +1,4 @@
-@primary-color: #313653;
+@primary-color:#000000;
 /* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
 /* stylelint-disable no-duplicate-selectors */
 /* stylelint-disable */
@@ -7333,7 +7333,22 @@ li.ant-tree-treenode-disabled > .ant-tree-node-content-wrapper:hover {
 .header .ant-menu .ant-menu-item:hover {
   color: #ffffff;
 }
-.header__trigger {
-  color: #ffffff;
-}
 
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  width:0px;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  // -webkit-box-shadow:inset006pxrgba(0,0,0,0.3);
+  border-radius:1px;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius:1px;
+  background:rgba(0,0,0,0.1);
+  // -webkit-box-shadow:inset006pxrgba(0,0,0,0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background:rgba(255,0,0,0.4);
+}

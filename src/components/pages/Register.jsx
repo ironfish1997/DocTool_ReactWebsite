@@ -18,18 +18,30 @@ import {
 import residences from "@/config/residences";
 
 class RegistrationForm extends React.Component {
-  state = {
+  initialState = {
     confirmDirty: false,
     autoCompleteResult: []
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         //提交表单
         console.log("Register Received values of form: ", values);
         const { doRegister, history } = this.props;
+        let area_string = "";
+        if(values.area){
+          values.area.map((value,key)=>{
+            if(key===0){
+              area_string = value;
+            }else{
+              area_string = area_string + "," + value;
+            }
+            return 0;
+          })
+        }
+        values.area = area_string;
         doRegister(values)
           .then(msg => {
             notificateUtil.openNotificationWithIcon("success", msg);
@@ -44,7 +56,7 @@ class RegistrationForm extends React.Component {
 
   handleConfirmBlur = e => {
     const value = e.target.value;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+    this.setState({ confirmDirty: this.initialState.confirmDirty || !!value });
   };
 
   compareToFirstPassword = (rule, value, callback) => {
@@ -58,7 +70,7 @@ class RegistrationForm extends React.Component {
 
   validateToNextPassword = (rule, value, callback) => {
     const form = this.props.form;
-    if (value && this.state.confirmDirty) {
+    if (value && this.initialState.confirmDirty) {
       form.validateFields(["confirm"], { force: true });
     }
     callback();
@@ -203,7 +215,8 @@ class RegistrationForm extends React.Component {
                   </Button>
                 </Form.Item>
               </Form>
-              {/** 跳回登录页面 */}或<Link to="/login"> 返回登录页面</Link>
+              {/** 跳回登录页面 */}
+              或<Link to="/login"> 返回登录页面</Link>
             </Card>
           </div>
         </div>

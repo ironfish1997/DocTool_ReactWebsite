@@ -6,7 +6,7 @@ import { Row, Col, Card, Button, Radio, Icon, Menu, Dropdown } from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 
 class Buttons extends React.Component {
-    state = {
+    initialState = {
         size: 'default',
         loading: false,
         iconLoading: false,
@@ -25,7 +25,7 @@ class Buttons extends React.Component {
         this.setState({ iconLoading: true });
     };
     render() {
-        const size = this.state.size;
+        const size = this.initialState.size;
         const menu = (
             <Menu onClick={this.handleMenuClick}>
                 <Menu.Item key="1">1st item</Menu.Item>
@@ -109,10 +109,10 @@ class Buttons extends React.Component {
                                     Loading
                                 </Button>
                                 <br />
-                                <Button type="primary" loading={this.state.loading} onClick={this.enterLoading}>
+                                <Button type="primary" loading={this.initialState.loading} onClick={this.enterLoading}>
                                     Click me!
                                 </Button>
-                                <Button type="primary" icon="poweroff" loading={this.state.iconLoading} onClick={this.enterIconLoading}>
+                                <Button type="primary" icon="poweroff" loading={this.initialState.iconLoading} onClick={this.enterIconLoading}>
                                     Click me!
                                 </Button>
                                 <br />

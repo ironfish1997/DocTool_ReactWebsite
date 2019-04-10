@@ -12,7 +12,7 @@ import draftToMarkdown from 'draftjs-to-markdown';
 const rawContentState = {"entityMap":{"0":{"type":"IMAGE","mutability":"MUTABLE","data":{"src":"http://i.imgur.com/aMtBIep.png","height":"auto","width":"100%"}}},"blocks":[{"key":"9unl6","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"95kn","text":" ","type":"atomic","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":0,"length":1,"key":0}],"data":{}},{"key":"7rjes","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
 
 class Wysiwyg extends Component {
-    state = {
+    initialState = {
         editorContent: undefined,
         contentState: rawContentState,
         editorState: '',
@@ -60,7 +60,7 @@ class Wysiwyg extends Component {
     );
 
     render() {
-        const { editorContent, editorState } = this.state;
+        const { editorContent, editorState } = this.initialState;
         return (
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="富文本" />

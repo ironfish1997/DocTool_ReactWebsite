@@ -14,7 +14,7 @@ class TabsCustom extends Component {
             { title: 'Tab 1', content: 'Content of Tab Pane 1', key: '1' },
             { title: 'Tab 2', content: 'Content of Tab Pane 2', key: '2' },
         ];
-        this.state = {
+        this.initialState = {
             activeKey: panes[0].key,
             panes,
             mode: 'top'
@@ -34,27 +34,27 @@ class TabsCustom extends Component {
         this[action](targetKey);
     };
     add = () => {
-        const panes = this.state.panes;
+        const panes = this.initialState.panes;
         const activeKey = `newTab${this.newTabIndex++}`;
         panes.push({ title: 'New Tab', content: 'New Tab Pane', key: activeKey });
         this.setState({ panes, activeKey });
     };
     remove = (targetKey) => {
-        let activeKey = this.state.activeKey;
+        let activeKey = this.initialState.activeKey;
         let lastIndex;
-        this.state.panes.forEach((pane, i) => {
+        this.initialState.panes.forEach((pane, i) => {
             if (pane.key === targetKey) {
                 lastIndex = i - 1;
             }
         });
-        const panes = this.state.panes.filter(pane => pane.key !== targetKey);
+        const panes = this.initialState.panes.filter(pane => pane.key !== targetKey);
         if (lastIndex >= 0 && activeKey === targetKey) {
             activeKey = panes[lastIndex].key;
         }
         this.setState({ panes, activeKey });
     };
     render() {
-        const { mode } = this.state;
+        const { mode } = this.initialState;
         return (
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="标签页" />
@@ -132,12 +132,12 @@ class TabsCustom extends Component {
                                 <Tabs
                                     hideAdd
                                     onChange={this.onChange}
-                                    activeKey={this.state.activeKey}
+                                    activeKey={this.initialState.activeKey}
                                     type="editable-card"
                                     onEdit={this.onEdit}
                                 >
 
-                                    {this.state.panes.map(pane => <TabPane tab={pane.title} key={pane.key}>{pane.content}</TabPane>)}
+                                    {this.initialState.panes.map(pane => <TabPane tab={pane.title} key={pane.key}>{pane.content}</TabPane>)}
                                 </Tabs>
                             </Card>
                         </div>
