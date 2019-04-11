@@ -173,7 +173,11 @@ class EditTreatmentPanel extends React.Component {
                 </Form.Item>
               </Col>
               <Col offset={18} span={6}>
-                或<Link to="/app/treatment/patientInfo/treatmentInfoManage"> 返回</Link>
+                或
+                <Link to="/app/treatment/patientInfo/treatmentInfoManage">
+                  {" "}
+                  返回
+                </Link>
               </Col>
             </Row>
           </Form>

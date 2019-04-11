@@ -20,6 +20,7 @@ import MapUi from "./ui/map";
 import QueryParams from "./extension/QueryParams";
 import EditAccountInfo from "./editAccountInfo/index";
 import PatientInfoPanel from "./patientInfoPanel/MainPanel";
+import EmergencyNotificationPanel from "./emergencyNotificationPanel"
 
 const WysiwygBundle = Loadable({
   // 按需加载富文本配置
@@ -31,6 +32,7 @@ export {
   BasicTable,
   AdvancedTable,
   AsynchronousTable,
+  EmergencyNotificationPanel,
   Icons,
   Buttons,
   Spins,
