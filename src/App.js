@@ -3,7 +3,7 @@ import { Route, Redirect, Switch } from "react-router-dom";
 import DocumentTitle from "react-document-title";
 import SiderCustom from "./components/SiderCustom";
 import HeaderCustom from "./components/HeaderCustom";
-import { PatientMainPanel }from "./components/patientInfoPanel";
+import { PatientInfoPanel, EmergencyNotificationPanel } from "./components";
 import HomePanel from "./components/dashboard/Dashboard";
 import { Layout /* notification, Icon */ } from "antd";
 import editAccountInfo from "./components/editAccountInfo/index";
@@ -87,10 +87,17 @@ class App extends Component {
             <Content style={{ overflow: "initial", flex: "1 1 0" }}>
               <Switch>
                 <Route
-                  path={`${match.path}/treatment`}
-                  component={PatientMainPanel}
+                  path={`${match.path}/treatment/patientInfo`}
+                  component={PatientInfoPanel}
                 />
-                <Route path={`${match.path}/main`} component={HomePanel} />
+                <Route
+                  path={`${match.path}/treatment/notification`}
+                  component={EmergencyNotificationPanel}
+                />
+                <Route
+                  path={`${match.path}/main`}
+                  component={HomePanel}
+                />
                 <Route
                   path={`${match.path}/editAccountInfo`}
                   component={editAccountInfo}
