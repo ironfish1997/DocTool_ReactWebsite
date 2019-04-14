@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { Form, Input, Row, Col, Card, Button, DatePicker, Select } from "antd";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 // import * as notificationUtil from "@/action/common/openNotification";
 const { Option } = Select;
 // import * as notificationUtil from "@/action/common/openNotification";
@@ -162,7 +161,15 @@ class DoReviewPanel extends Component {
                 </Form.Item>
               </Col>
               <Col offset={18} span={6}>
-                或<Link to="/app/publicHealth/specialDisease"> 返回</Link>
+                或
+                <span
+                  onClick={() => {
+                    this.props.history.goBack();
+                  }}
+                >
+                  {" "}
+                  返回
+                </span>
               </Col>
             </Row>
           </Form>

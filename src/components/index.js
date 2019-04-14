@@ -11,6 +11,7 @@ import EditAccountInfo from "./editAccountInfo/index";
 import PatientInfoPanel from "./patientInfoPanel/MainPanel";
 import EmergencyNotificationPanel from "./emergencyNotificationPanel";
 import { MedicineItemPanel } from "./medicineItemPanel";
+import AdminPanel from "./admin";
 
 export {
   EmergencyNotificationPanel,
@@ -20,5 +21,6 @@ export {
   PublicHealthNotificationPanel,
   SpecialDiseaseReviewPanel,
   DoReviewPanel,
-  MedicineItemPanel
+  MedicineItemPanel,
+  AdminPanel
 };

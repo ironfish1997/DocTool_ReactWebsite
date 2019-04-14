@@ -134,7 +134,7 @@ class PatientDocPanel extends Component {
           ]}
           style={{ marginBottom: "5px" }}
         />
-        <Row gutter={24} style={{ margin: "0px" }}>
+        <Row gutter={24} style={{ margin: "0px" }} type="flex">
           <Col span={7} style={{ padding: "0px" }}>
             <Search
               placeholder="输入病人身份证号搜索病人信息"

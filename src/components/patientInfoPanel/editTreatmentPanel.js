@@ -164,7 +164,7 @@ class EditTreatmentPanel extends React.Component {
                 />
               )}
             </Form.Item>
-            <Row>
+            <Row type="flex">
               <Col offset={18} span={6}>
                 <Form.Item /*{...tailFormItemLayout}*/>
                   <Button type="primary" htmlType="submit">

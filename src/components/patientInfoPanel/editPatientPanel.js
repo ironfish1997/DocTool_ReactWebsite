@@ -169,7 +169,7 @@ class EditPatientPanel extends React.Component {
                 rules: [{ required: false }]
               })(<Input style={{ width: "100%" }} placeholder="选填" />)}
             </Form.Item>
-            <Row>
+            <Row type="flex">
               <Col offset={18} span={6}>
                 <Form.Item /*{...tailFormItemLayout}*/>
                   <Button type="primary" htmlType="submit">

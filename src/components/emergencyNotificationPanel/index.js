@@ -152,7 +152,7 @@ class EmergencyNotificationPanel extends Component {
                 {options}
               </Select>
               <Divider />
-              <Row gutter={24}>
+              <Row gutter={24} type="flex">
                 <Col span={20} offset={2}>
                   <span>快捷选择：</span>
                   <Select
@@ -172,7 +172,7 @@ class EmergencyNotificationPanel extends Component {
               title="选择模板"
               size="small"
             >
-              <Row gutter={24}>
+              <Row gutter={24} type="flex">
                 <Col span={20} offset={2}>
                   <Select
                     defaultValue="无"
@@ -195,7 +195,7 @@ class EmergencyNotificationPanel extends Component {
               title="选择归期"
               size="small"
             >
-              <Row gutter={24}>
+              <Row gutter={24} type="flex">
                 <Col span={20} offset={2}>
                   <DatePicker
                     showTime

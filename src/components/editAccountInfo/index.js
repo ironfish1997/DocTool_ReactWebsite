@@ -121,7 +121,7 @@ class EditAccountInfo extends React.Component {
           hoverable
         >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-            <Row gutter={24}>
+            <Row gutter={24} type="flex">
               <Col span={12} style={{ display: "block" }}>
                 {/* 密码 */}
                 <Form.Item label="密码">

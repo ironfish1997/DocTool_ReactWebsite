@@ -9,7 +9,7 @@ class SelectCustom extends Component {
     this.state = {
       ...value
     };
-    console.log(props);
+    // console.log(props);
   }
 
   componentWillReceiveProps() {

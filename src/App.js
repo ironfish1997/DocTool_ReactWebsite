@@ -9,10 +9,11 @@ import {
   EmergencyNotificationPanel,
   PublicHealthNotificationPanel,
   SpecialDiseaseReviewPanel,
-  DoReviewPanel
+  DoReviewPanel,
+  AdminPanel
 } from "./components";
 import HomePanel from "./components/dashboard/Dashboard";
-import { Layout /* notification, Icon */ } from "antd";
+import { Layout } from "antd";
 import editAccountInfo from "./components/editAccountInfo/index";
 import { withLoginAuth } from "./HOC/withLoginAuth";
 
@@ -57,6 +58,7 @@ class App extends Component {
                     path={`${match.path}/treatment/notification`}
                     component={EmergencyNotificationPanel}
                   />
+                  <Route path={`${match.path}/admin`} component={AdminPanel} />
                   <Route
                     path={`${match.path}/publicHealth/notification`}
                     component={PublicHealthNotificationPanel}

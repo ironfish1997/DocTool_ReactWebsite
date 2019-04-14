@@ -231,7 +231,7 @@ class ItemQueryPanel extends Component {
         <Collapse accordion>
           <Panel header="筛选" key="1" forceRender>
             <Form layout="inline" onSubmit={this.handleSubmit}>
-              <Row gutter={24} style={{ margin: "0px" }}>
+              <Row gutter={24} style={{ margin: "0px" }} type="flex">
                 <Col span={7} style={{ padding: "0px" }}>
                   <Form.Item label="销售员姓名">
                     {getFieldDecorator("salesman_name", {
@@ -258,7 +258,11 @@ class ItemQueryPanel extends Component {
             </Form>
           </Panel>
         </Collapse>
-        <Row gutter={24} style={{ margin: "0px", paddingTop: "5px" }}>
+        <Row
+          gutter={24}
+          style={{ margin: "0px", paddingTop: "5px" }}
+          type="flex"
+        >
           <Table
             bordered
             columns={columns}
