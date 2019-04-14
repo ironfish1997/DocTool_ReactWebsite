@@ -122,9 +122,8 @@ class PatientDocPanel extends Component {
     ];
 
     return (
-      <div style={{ paddingLeft: "10px" }}>
+      <div style={{ paddingLeft: "5px" }}>
         <PageHeader
-          title="病人档案管理"
           bordered
           extra={[
             <Button key="3" type="primary">

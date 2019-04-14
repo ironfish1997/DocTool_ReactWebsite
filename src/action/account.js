@@ -82,7 +82,7 @@ export const checkLogin = (session_id = "") => dispatch => {
     const requestHeader = {
       session_id: session_id
     };
-    httpUtil(api_path.check_login_url, null, requestHeader, "POST").then(
+    return httpUtil(api_path.check_login_url, null, requestHeader, "POST").then(
       response => {
         response.json().then(response_json => {
           if (response_json.rtn === 0) {
@@ -99,6 +99,11 @@ export const checkLogin = (session_id = "") => dispatch => {
             reject("check failed");
           }
         });
+      },
+      error => {
+        console.log("logining request error");
+        dispatch(logincheckFailed(error));
+        reject("check failed");
       }
     );
   });
@@ -166,9 +171,7 @@ export const doRegister = data => dispatch => {
       account_password: data.account_password,
       name: data.name,
       area: data.area,
-      account_permission: [
-        "doctor_auth"
-      ],
+      account_permission: ["doctor_auth"],
       contacts: {
         wechat: data.wechat,
         qq: data.qq,

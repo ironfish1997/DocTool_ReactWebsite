@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, Input, PageHeader, Button, Table, Divider } from "antd";
+import { Row, Col, Input, Button, Table, Divider } from "antd";
 import { Link } from "react-router-dom";
 import "./index.less";
 const Search = Input.Search;
@@ -16,12 +16,6 @@ class TreatmentSearchPanel extends Component {
       pathname: "/app/treatment/patientInfo/editTreatmentRecord",
       treatmentRecord: record
     });
-    // return (
-    //   <Redirect
-    //     to="/app/treatment/patientInfo/editTreatmentRecord"
-    //     treatmentRecord={record}
-    //   />
-    // );
   };
 
   render() {
@@ -113,8 +107,8 @@ class TreatmentSearchPanel extends Component {
     ];
 
     return (
-      <div style={{ paddingLeft: "10px" }}>
-        <PageHeader
+      <div style={{ paddingLeft: "5px" }}>
+        {/* <PageHeader
           title="就诊记录管理"
           bordered
           extra={[
@@ -128,7 +122,7 @@ class TreatmentSearchPanel extends Component {
             </Button>
           ]}
           style={{ marginBottom: "5px" }}
-        />
+        /> */}
         <Row gutter={24} style={{ margin: "0px" }}>
           <Col span={7} style={{ padding: "0px" }}>
             <Search
@@ -136,6 +130,13 @@ class TreatmentSearchPanel extends Component {
               onSearch={value => console.log(value)}
               enterButton
             />
+          </Col>
+          <Col span={7} offset={1} style={{ padding: "0px" }}>
+            <Button key="3" type="primary">
+              <Link to="/app/treatment/patientInfo/editTreatmentRecord">
+                新增记录
+              </Link>
+            </Button>
           </Col>
         </Row>
         <Row gutter={24} style={{ margin: "0px", paddingTop: "5px" }}>

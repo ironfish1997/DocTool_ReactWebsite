@@ -8,24 +8,24 @@ import {
   DatePicker,
   Button,
   PageHeader,
-  Icon,
+  List,
   Typography
 } from "antd";
 // import { Switch, Route, Link } from "react-router-dom";
-import { Card, List } from "antd";
+import { Card } from "antd";
 import "./index.less";
 const { Sider, Content } = Layout;
 const Option = Select.Option;
 const { Paragraph, Text } = Typography;
 
-class EmergencyNotificationPanel extends Component {
+class PublicHealthNotificationPanel extends Component {
   state = {
     data: [],
     loading: false,
     hasMore: true,
     name: "xxx",
     time: "2019-04-13 14:00:00",
-    template: `%{name} 你好，今天我有事外出了，诊所不开门, 我会在%{time}回来，麻烦在这个时间之后过来吧，不好意思`,
+    template: `%{name} 你好，最近有国家基本医疗活动,开始时间是%{time}，麻烦在这个时间之后来医疗点参加`,
     //TODO patients应该是当前正在就诊的病人
     patients: [
       {
@@ -116,8 +116,7 @@ class EmergencyNotificationPanel extends Component {
     return (
       <Layout className="emergencyNotificationPanel">
         <PageHeader
-          title={`特殊情况通知`}
-          backIcon={<Icon type="arrow-left" />}
+          title={`公共通知`}
           bordered
           extra={
             [
@@ -160,8 +159,7 @@ class EmergencyNotificationPanel extends Component {
                     style={{ width: "100%" }}
                     onChange={this.selectTargetPatients.bind(this)}
                   >
-                    <Option value="patientNow">所有正在就诊的病人</Option>
-                    <Option value="allPatient">所有病人</Option>
+                    <Option value="patientNow">所有辖区内居民</Option>
                   </Select>
                 </Col>
               </Row>
@@ -179,10 +177,10 @@ class EmergencyNotificationPanel extends Component {
                     style={{ width: "100%" }}
                     onChange={this.selectTargetTemplate.bind(this)}
                   >
-                    <Option key="patientNow" value="patientNow">
+                    <Option key="template1" value="template1">
                       模板一
                     </Option>
-                    <Option key="allPatient" value="allPatient">
+                    <Option key="template2" value="template2">
                       模板二
                     </Option>
                   </Select>
@@ -192,14 +190,14 @@ class EmergencyNotificationPanel extends Component {
             <Card
               hoverable
               className="left_bottom_patient_selector"
-              title="选择归期"
+              title="选择服务开始时间"
               size="small"
             >
               <Row gutter={24}>
                 <Col span={20} offset={2}>
                   <DatePicker
                     showTime
-                    placeholder="请选择归期"
+                    placeholder="请选择服务开始时间"
                     onChange={this.saveReturnTime.bind(this)}
                     onOk={this.saveReturnTime.bind(this)}
                   />
@@ -221,11 +219,6 @@ class EmergencyNotificationPanel extends Component {
               className="right_top_show_panel"
               hoverable
               title="预览"
-              //   cover={
-              //     <PageHeader
-              //         title={``}
-              //         bordered/>
-              //   }
               type={`inner`}
             >
               <Typography>
@@ -268,4 +261,4 @@ class EmergencyNotificationPanel extends Component {
   }
 }
 
-export default EmergencyNotificationPanel;
+export default PublicHealthNotificationPanel;

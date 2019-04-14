@@ -5,7 +5,6 @@ import { flushAccount } from "../action/account";
 // import { queryString } from "../utils";
 import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
-import { PwaInstaller } from "./widget";
 import { bindActionCreators } from "redux";
 const { Header } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -43,10 +42,22 @@ class HeaderCustom extends Component {
           type={this.props.collapsed ? "menu-unfold" : "menu-fold"}
           onClick={this.props.toggle}
         /> */}
-        <Menu mode="horizontal" style={{ lineHeight: "64px", float: "right" }}>
-          <Menu.Item key="pwa">
-            <PwaInstaller />
+        <Menu mode="horizontal" style={{ lineHeight: "64px", float: "left" }}>
+          <Menu.Item>
+            <div className="logo" style={{ lineHeight: "100%", width: "50px" }}>
+              <img
+                alt="logo"
+                src={process.env.PUBLIC_URL + "/images/icons/doc-icon.png"}
+                height="100%"
+                width="100%"
+                style={{
+                  marginLeft: "-20px"
+                }}
+              />
+            </div>
           </Menu.Item>
+        </Menu>
+        <Menu mode="horizontal" style={{ lineHeight: "64px", float: "right" }}>
           <Menu.Item key="full" onClick={this.screenFull}>
             <Icon type="arrows-alt" onClick={this.screenFull} />
           </Menu.Item>

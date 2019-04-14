@@ -29,7 +29,7 @@ class PatientMainPanel extends Component {
           style={{ marginBottom: "5px" }}
         />
         <Layout className="patientInfoPanel">
-          <Sider style={{ margin: "0", padding: "0", opacity: "0.8" }}>
+          <Sider style={{ marginTop: "-5px", padding: "0", opacity: "0.9" }}>
             <Menu
               mode="inline"
               defaultSelectedKeys={["1"]}

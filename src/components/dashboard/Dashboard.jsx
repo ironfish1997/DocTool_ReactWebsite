@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Card, Timeline, Icon } from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
-import EchartsViews from './EchartsViews';
-import EchartsProjects from './EchartsProjects';
+// import EchartsViews from './EchartsViews';
+// import EchartsProjects from './EchartsProjects';
 import b1 from '../../style/imgs/b1.jpg';
 
 
@@ -71,7 +71,7 @@ class Dashboard extends React.Component {
                     <Col className="gutter-row" md={16}>
                         <div className="gutter-box">
                             <Card bordered={false} className={'no-padding'}>
-                                <EchartsProjects />
+                                {/* <EchartsProjects /> */}
                             </Card>
                         </div>
                     </Col>
@@ -158,7 +158,7 @@ class Dashboard extends React.Component {
                                     <small>最近7天用户访问量</small>
                                 </div>
                                 <span className="card-tool"><Icon type="sync" /></span>
-                                <EchartsViews />
+                                {/* <EchartsViews /> */}
                             </Card>
                         </div>
                     </Col>

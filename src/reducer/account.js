@@ -14,18 +14,18 @@ export default (state = initState, action) => {
       return {
         ...state,
         session_id: action.data.session_id,
-        isLogin: true
+        checked: true
       };
     case types.ACCOUNT_LOGIN_FAILED:
       localStorage.setItem("session_id", "");
-      return { ...state, user: {}, isLogin: false };
+      return { ...state, user: {}, checked: false };
     case types.ACCOUNT_LOGINCHECK_SUCCESS:
-      return { ...state, user: action.data, isLogin: true };
+      return { ...state, user: action.data, checked: true };
     case types.ACCOUNT_LOGINCHECK_FAILED:
-      return { ...state, user: {}, isLogin: false };
+      return { ...state, user: {}, checked: false };
     case types.FLUSH_ACCOUNT:
       localStorage.clear();
-      return { isLogin: false };
+      return { checked: false };
     case types.ACCOUNT_REGISTER_SUCCESS:
       return state;
     case types.ACCOUNT_REGISTER_FAILED:

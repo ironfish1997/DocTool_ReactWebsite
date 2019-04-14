@@ -44,7 +44,7 @@ class SiderCustom extends Component {
   };
 
   openMenu = v => {
-    console.log(v);
+    // console.log(v);
     this.setState({
       openKey: v[v.length - 1],
       firstHide: false
@@ -65,14 +65,6 @@ class SiderCustom extends Component {
           this.setState({ collapsed: true });
         }}
       >
-        <div className="logo">
-          <img
-            alt="logo"
-            src={process.env.PUBLIC_URL + "/images/icons/doc-icon.png"}
-            width="100%"
-            height="100%"
-          />
-        </div>
         <SiderMenu
           menus={routes.menus}
           onClick={this.menuClick}
