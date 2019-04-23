@@ -8,12 +8,18 @@ import { httpUtil } from "@/utils";
 // import EchartsProjects from './EchartsProjects';
 import MessageSpan from "./MessageSpan";
 import { option } from "./echartConfig";
+import indexedDBUtilBuilder from "@/utils/indexDBUtil";
 
 class Dashboard extends React.Component {
-  state = {
-    unReviewPatients: [],
-    options: { ...option }
-  };
+  constructor(props) {
+    super(props);
+    const indexedDBUtil = new indexedDBUtilBuilder("patients", null);
+    this.state = {
+      unReviewPatients: [],
+      options: { ...option },
+      indexedDBUtil: indexedDBUtil
+    };
+  }
   componentDidMount() {
     httpUtil(
       "https://cors-anywhere.herokuapp.com/" +
@@ -82,6 +88,18 @@ class Dashboard extends React.Component {
     });
   };
   render() {
+    this.state.indexedDBUtil
+      .findOne("patients", "123")
+      .then(response =>
+        response.json().then(response => {
+          console.log("find one");
+          console.log(response);
+        })
+      )
+      .catch(error => {
+        console.log("find one");
+        console.log(error);
+      });
     return (
       <div className="main">
         <Row gutter={10} type="flex">
@@ -153,16 +171,13 @@ class Dashboard extends React.Component {
                 </span>
                 <ul className="list-group no-border">
                   <li className="list-group-item">
-                    <MessageSpan msgValue={"需要发通知"} />
+                    <MessageSpan msgValue={"糖尿病信息采集开始了"} />
                   </li>
                   <li className="list-group-item">
-                    <MessageSpan msgValue={"需要发通知"} />
+                    <MessageSpan msgValue={"增加新病患信息"} />
                   </li>
                   <li className="list-group-item">
-                    <MessageSpan msgValue={"需要发通知"} />
-                  </li>
-                  <li className="list-group-item">
-                    <MessageSpan msgValue={"需要发通知"} />
+                    <MessageSpan msgValue={"发送通知短信成功"} />
                   </li>
                 </ul>
               </Card>

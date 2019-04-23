@@ -1,12 +1,14 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
-import { Form, Input, Row, Col, Card, Button, DatePicker } from "antd";
-import { doUpdate } from "@/action/account";
+import { Form, Input, Row, Col, Card, Button, DatePicker, message } from "antd";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-// import * as notificationUtil from "@/action/common/openNotification";
-import { flushAccount } from "../../action/account";
+import * as notificationUtil from "@/action/common/openNotification";
+import moment from "moment";
+import {
+  doUpdateTreatmentRecord,
+  doAddTreatmentRecord
+} from "@/action/treatment";
 const { TextArea } = Input;
 
 /**
@@ -14,44 +16,55 @@ const { TextArea } = Input;
  */
 
 class EditTreatmentPanel extends React.Component {
-  initialState = {
-    confirmDirty: false,
-    autoCompleteResult: []
-  };
+  constructor(props) {
+    super(props);
+    const { location } = this.props;
+    const { treatmentRecord, isUpdate } = location;
+    let treatmentRecordState = treatmentRecord
+      ? JSON.parse(JSON.stringify(treatmentRecord))
+      : {};
+    this.state = {
+      confirmDirty: false,
+      autoCompleteResult: true,
+      treatmentRecord: treatmentRecordState ? treatmentRecordState : [],
+      isUpdate: isUpdate ? true : false
+    };
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        // const { account } = this.props;
-        // let area_string = "";
-        // if (values.area) {
-        //   values.area.map((value, key) => {
-        //     if (key === 0) {
-        //       area_string = value;
-        //     } else {
-        //       area_string = area_string + "," + value;
-        //     }
-        //     return 0;
-        //   });
-        // }
-        // values.account_id = account.user.account_id;
-        // values.area = area_string;
-        // console.log("修改用户数据: ", values);
-        // const { updateUserInfo } = this.props;
-        // let reg = new RegExp('"', "g");
-        // let session_id_to_check = account.session_id.replace(reg, "");
-        // updateUserInfo(values, session_id_to_check).then(
-        //   msg => {
-        //     notificationUtil.openNotificationWithIcon("success", msg);
-        //     setTimeout(() => {
-        //       const { flushAccount } = this.props;
-        //       flushAccount();
-        //     }, 1000);
-        //   },
-        //   error => {
-        //     notificationUtil.openNotificationWithIcon("error", error);
-        //   }
-        // );
+        //如果是更新数据，则请求更新病人的接口
+        values.start_time = values.start_time.valueOf();
+        values.end_time = values.end_time.valueOf();
+        if (this.state.isUpdate) {
+          message.loading("正在处理数据，请稍候", 0);
+          this.props
+            .doUpdateTreatmentRecord(localStorage.getItem("session_id"), values)
+            .then(msg => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("success", msg);
+              this.props.history.goBack();
+            })
+            .catch(e => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("error", e);
+            });
+        } else {
+          message.loading("正在处理数据，请稍候", 0);
+          this.props
+            .doAddTreatmentRecord(localStorage.getItem("session_id"), values)
+            .then(msg => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("success", msg);
+              this.props.history.goBack();
+            })
+            .catch(e => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("error", e);
+            });
+        }
       }
     });
   };
@@ -67,19 +80,7 @@ class EditTreatmentPanel extends React.Component {
         sm: { span: 16 }
       }
     };
-    const { account } = this.props;
-    if (!account.user) {
-      return <Redirect to="/login" />;
-    }
     const { getFieldDecorator } = this.props.form;
-    let returnArray = [];
-    if (account.user && account.user.area) {
-      account.user.area.split(",").map((value, key) => {
-        returnArray.push(value);
-        return 0;
-      });
-    }
-
     return (
       <div className="edit_treatment_panel" style={{ paddingLeft: "5px" }}>
         <Card
@@ -89,11 +90,23 @@ class EditTreatmentPanel extends React.Component {
           hoverable
         >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-            {/* <Row gutter={24}> */}
-            {/* <Col span={12} style={{ display: "block" }}> */}
+            {this.state.isUpdate ? (
+              <Form.Item label="记录编号">
+                {getFieldDecorator("id", {
+                  initialValue: this.state.treatmentRecord.id,
+                  rules: [
+                    {
+                      required: true,
+                      message: "请填写病症名称"
+                    }
+                  ]
+                })(<Input placeholder="比如感冒、发烧" readOnly="readonly" />)}
+              </Form.Item>
+            ) : null}
             {/* 病症名称 */}
             <Form.Item label="病症名称">
               {getFieldDecorator("disease_name", {
+                initialValue: this.state.treatmentRecord.disease_name,
                 rules: [
                   {
                     required: true,
@@ -102,11 +115,10 @@ class EditTreatmentPanel extends React.Component {
                 ]
               })(<Input placeholder="比如感冒、发烧" />)}
             </Form.Item>
-            {/* </Col> */}
-            {/* <Col span={12} style={{ display: "block" }}> */}
             {/* 病人身份证号 */}
             <Form.Item label="病人身份证号">
               {getFieldDecorator("patient_id_number", {
+                initialValue: this.state.treatmentRecord.patient_id_number,
                 rules: [
                   {
                     required: true,
@@ -115,11 +127,12 @@ class EditTreatmentPanel extends React.Component {
                 ]
               })(<Input />)}
             </Form.Item>
-            {/* </Col> */}
             {/** 就诊开始日期 */}
-            {/* <Col span={12} style={{ display: "block" }}> */}
             <Form.Item label="就诊开始日期">
               {getFieldDecorator("start_time", {
+                initialValue: this.state.treatmentRecord.start_time
+                  ? moment(this.state.treatmentRecord.start_time, "YYYY-MM-DD")
+                  : null,
                 rules: [
                   {
                     required: true,
@@ -128,11 +141,12 @@ class EditTreatmentPanel extends React.Component {
                 ]
               })(<DatePicker placeholder="请选择就诊开始时间" />)}
             </Form.Item>
-            {/* </Col> */}
             {/** 就诊结束日期 */}
-            {/* <Col span={12} style={{ display: "block" }}> */}
             <Form.Item label="就诊结束日期">
               {getFieldDecorator("end_time", {
+                initialValue: this.state.treatmentRecord.end_time
+                  ? moment(this.state.treatmentRecord.end_time, "YYYY-MM-DD")
+                  : null,
                 rules: [
                   {
                     required: true,
@@ -141,19 +155,17 @@ class EditTreatmentPanel extends React.Component {
                 ]
               })(<DatePicker placeholder="请选择就诊结束时间" />)}
             </Form.Item>
-            {/* </Col> */}
             {/* 备注 */}
-            {/* <Col span={12} style={{ display: "block" }}> */}
             <Form.Item label="备注">
               {getFieldDecorator("extra_meta", {
+                initialValue: this.state.treatmentRecord.extra_meta,
                 rules: [{ required: false }]
               })(<Input style={{ width: "100%" }} placeholder="选填" />)}
             </Form.Item>
-            {/* </Col> */}
-            {/* </Row> */}
             {/* 用药记录 */}
             <Form.Item label="用药记录" style={{ marginLeft: "0px" }}>
               {getFieldDecorator("medicines_record", {
+                initialValue: this.state.treatmentRecord.medicines_record,
                 rules: [{ required: true, message: "请填写用药记录!" }]
               })(
                 <TextArea
@@ -186,13 +198,14 @@ class EditTreatmentPanel extends React.Component {
     );
   }
 }
-const mapStateToProps = state => ({
-  ...state
-});
+const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
-  updateUserInfo: bindActionCreators(doUpdate, dispatch),
-  flushAccount: bindActionCreators(flushAccount, dispatch)
+  doUpdateTreatmentRecord: bindActionCreators(
+    doUpdateTreatmentRecord,
+    dispatch
+  ),
+  doAddTreatmentRecord: bindActionCreators(doAddTreatmentRecord, dispatch)
 });
 
 export default connect(

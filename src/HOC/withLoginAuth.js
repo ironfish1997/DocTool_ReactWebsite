@@ -15,7 +15,7 @@ export const withLoginAuth = WrappedComponent => {
       };
     }
 
-    componentWillMount() {
+    componentDidMount() {
       if (!this.state.checked) {
         // console.log("CRoter:", this.props);
         const { account, checkLogin, history } = this.props;
@@ -41,7 +41,21 @@ export const withLoginAuth = WrappedComponent => {
         this.setState({
           checked: true
         });
-        checkLogin(session_id_to_check);
+        checkLogin(session_id_to_check).then(
+          data => {
+            console.log("检查成功");
+            return;
+          },
+          error => {
+            console.log(error);
+            notificationUtil.openNotificationWithIcon(
+              "warning",
+              "您还未登录！"
+            );
+            history.push("/login");
+            return;
+          }
+        );
       }
     }
 

@@ -1,57 +1,73 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
-import { Form, Input, Row, Col, Card, Button, Cascader } from "antd";
-import { doUpdate } from "@/action/account";
-import { bindActionCreators } from "redux";
+import { Form, Input, Row, Col, Card, Button, Cascader, message } from "antd";
+import { doAddPatient, doUpdatePatient } from "@/action/patient";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
 import residences from "@/config/residences";
-// import * as notificationUtil from "@/action/common/openNotification";
-import { flushAccount } from "../../action/account";
+import * as notificationUtil from "@/action/common/openNotification";
 
 /**
  * 处理病人个人信息
  */
 
 class EditPatientPanel extends React.Component {
-  initialState = {
-    confirmDirty: false,
-    autoCompleteResult: []
-  };
+  constructor(props) {
+    super(props);
+    const { location } = this.props;
+    const { patient, isUpdate } = location;
+    let patientState = patient
+      ? JSON.parse(JSON.stringify(patient))
+      : { contacts: {} };
+    this.state = {
+      confirmDirty: false,
+      autoCompleteResult: [],
+      patient: patientState,
+      isUpdate: isUpdate ? true : false
+    };
+  }
+
   handleSubmit = e => {
+    const { doAddPatient, doUpdatePatient } = this.props;
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        // const { account } = this.props;
-        // let area_string = "";
-        // if (values.area) {
-        //   values.area.map((value, key) => {
-        //     if (key === 0) {
-        //       area_string = value;
-        //     } else {
-        //       area_string = area_string + "," + value;
-        //     }
-        //     return 0;
-        //   });
-        // }
-        // values.account_id = account.user.account_id;
-        // values.area = area_string;
-        // console.log("修改用户数据: ", values);
-        // const { updateUserInfo } = this.props;
-        // let reg = new RegExp('"', "g");
-        // let session_id_to_check = account.session_id.replace(reg, "");
-        // updateUserInfo(values, session_id_to_check).then(
-        //   msg => {
-        //     notificationUtil.openNotificationWithIcon("success", msg);
-        //     setTimeout(() => {
-        //       const { flushAccount } = this.props;
-        //       flushAccount();
-        //     }, 1000);
-        //   },
-        //   error => {
-        //     notificationUtil.openNotificationWithIcon("error", error);
-        //   }
-        // );
+        let areaString = "";
+        values.area.map((v, k) => {
+          areaString = areaString + "," + v;
+          return null;
+        });
+        values.area = areaString.substring(1);
+        //特殊病症可能是数组也可能是字符串，故如果是字符串需要转换成数组
+        if (!Array.isArray(values.special_disease)) {
+          values.special_disease = values.special_disease.split(/,|，/);
+        }
+        //如果是更新数据，则请求更新病人的接口
+        if (this.state.isUpdate) {
+          message.loading("正在处理数据，请稍候", 0);
+          doUpdatePatient(localStorage.getItem("session_id"), values)
+            .then(msg => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("success", msg);
+              this.props.history.goBack();
+            })
+            .catch(e => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("error", e);
+            });
+        } else {
+          message.loading("正在处理数据，请稍候", 0);
+          doAddPatient(localStorage.getItem("session_id"), values)
+            .then(msg => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("success", msg);
+              this.props.history.goBack();
+            })
+            .catch(e => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon("error", e);
+            });
+        }
       }
     });
   };
@@ -67,14 +83,11 @@ class EditPatientPanel extends React.Component {
         sm: { span: 16 }
       }
     };
-    const { account } = this.props;
-    if (!account.user) {
-      return <Redirect to="/login" />;
-    }
+    const { patient } = this.state;
     const { getFieldDecorator } = this.props.form;
     let returnArray = [];
-    if (account.user && account.user.area) {
-      account.user.area.split(",").map((value, key) => {
+    if (patient && patient.area) {
+      patient.area.split(",").map((value, key) => {
         returnArray.push(value);
         return 0;
       });
@@ -89,9 +102,23 @@ class EditPatientPanel extends React.Component {
           hoverable
         >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+            {/* 病人编号 */}
+            {this.state.isUpdate ? (
+              <Form.Item label="病人编号">
+                {getFieldDecorator("id", {
+                  initialValue: patient.id,
+                  rules: [
+                    {
+                      required: false
+                    }
+                  ]
+                })(<Input readOnly />)}
+              </Form.Item>
+            ) : null}
             {/* 病人姓名 */}
             <Form.Item label="病人姓名">
               {getFieldDecorator("name", {
+                initialValue: patient.name,
                 rules: [
                   {
                     required: true,
@@ -103,6 +130,7 @@ class EditPatientPanel extends React.Component {
             {/* 病人身份证号 */}
             <Form.Item label="病人身份证号">
               {getFieldDecorator("id_number", {
+                initialValue: patient.id_number,
                 rules: [
                   {
                     required: true,
@@ -114,6 +142,7 @@ class EditPatientPanel extends React.Component {
             {/** 地区 */}
             <Form.Item label="地区">
               {getFieldDecorator("area", {
+                initialValue: returnArray,
                 rules: [
                   {
                     type: "array",
@@ -125,7 +154,8 @@ class EditPatientPanel extends React.Component {
             </Form.Item>
             {/* 电话号码 */}
             <Form.Item label="电话">
-              {getFieldDecorator("phone_number", {
+              {getFieldDecorator("contacts.phone_number", {
+                initialValue: patient.contacts.phone_number,
                 rules: [{ required: true, message: "请填写您的电话号码!" }]
               })(
                 <Input
@@ -137,35 +167,40 @@ class EditPatientPanel extends React.Component {
             </Form.Item>
             {/* 微信号 */}
             <Form.Item label="微信">
-              {getFieldDecorator("wechat", {
+              {getFieldDecorator("contacts.wechat", {
+                initialValue: patient.contacts.wechat,
                 rules: [{ required: false }]
               })(<Input style={{ width: "100%" }} placeholder="选填" />)}
             </Form.Item>
             {/* QQ号 */}
             <Form.Item label="QQ">
-              {getFieldDecorator("qq", {
+              {getFieldDecorator("contacts.qq", {
+                initialValue: patient.contacts.qq,
                 rules: [{ required: false }]
               })(<Input style={{ width: "100%" }} placeholder="选填" />)}
             </Form.Item>
             {/* 邮箱号 */}
             <Form.Item label="电子邮箱">
-              {getFieldDecorator("email", {
+              {getFieldDecorator("contacts.email", {
+                initialValue: patient.contacts.email,
                 rules: [{ required: false }]
               })(<Input style={{ width: "100%" }} placeholder="选填" />)}
             </Form.Item>
             {/** 特殊病症 */}
             <Form.Item label="特殊病症">
               {getFieldDecorator("special_disease", {
+                initialValue: patient.special_disease,
                 rules: [
                   {
                     required: false
                   }
                 ]
-              })(<Input placeholder="选填" />)}
+              })(<Input placeholder="多个病症请以逗号分隔开" />)}
             </Form.Item>
             {/* 备注 */}
             <Form.Item label="备注">
               {getFieldDecorator("extra_meta", {
+                initialValue: patient.extra_meta,
                 rules: [{ required: false }]
               })(<Input style={{ width: "100%" }} placeholder="选填" />)}
             </Form.Item>
@@ -196,8 +231,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateUserInfo: bindActionCreators(doUpdate, dispatch),
-  flushAccount: bindActionCreators(flushAccount, dispatch)
+  doAddPatient: bindActionCreators(doAddPatient, dispatch),
+  doUpdatePatient: bindActionCreators(doUpdatePatient, dispatch)
 });
 
 export default connect(

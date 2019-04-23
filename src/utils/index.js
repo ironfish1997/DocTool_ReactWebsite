@@ -21,12 +21,23 @@ export const queryString = () => {
  * 发送http请求
  * @param {*} url
  * @param {*} params
+ * @param {*} body
  * @param {*} headers
  * @param {*} method
  */
-export const httpUtil = (url, params, headers, method) => {
-  return fetch(url, {
-    body: params ? JSON.stringify(params) : null, // must match 'Content-Type' header
+export const httpUtil = (url, params, body, headers, method) => {
+  var esc = encodeURIComponent;
+  var query = "";
+  if (params) {
+    query =
+      "?" +
+      Object.keys(params)
+        .map(k => esc(k) + "=" + esc(params[k]))
+        .join("&")
+        .toString();
+  }
+  return fetch(url + query, {
+    body: body ? JSON.stringify(body) : null, // must match 'Content-Type' header
     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
     credentials: "same-origin", // include, same-origin, *omit
     headers: {

@@ -1,27 +1,72 @@
 import React, { Component } from "react";
-import { Row, Col, Input, PageHeader, Button, Table, Divider } from "antd";
+import {
+  Row,
+  Col,
+  Input,
+  PageHeader,
+  Button,
+  Table,
+  Divider,
+  Modal
+} from "antd";
 import { Link } from "react-router-dom";
 import "./index.less";
+import { bindActionCreators } from "redux";
+import { findAllPatients, deleteOnePatients } from "@/action/patient";
+import { connect } from "react-redux";
+import * as notificationUtil from "@/action/common/openNotification";
+import { getPatients } from "@/selector/patient";
 const Search = Input.Search;
 
 class PatientDocPanel extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
+  state = {
+    visible: false,
+    targetPatient: {}
+  };
+  componentDidMount() {
+    const { findAllPatients } = this.props;
+    let session_id = localStorage.getItem("session_id");
+    findAllPatients(session_id)
+      .then(response => {
+        console.log("获取所有病人记录成功");
+      })
+      .catch(error => {
+        console.log("获取所有病人信息失败");
+      });
   }
 
-  redirectToEditPanel = record => {
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
+    this.props
+      .deleteOnePatients(
+        localStorage.getItem("session_id"),
+        this.state.targetPatient.id
+      )
+      .then(msg => {
+        notificationUtil.openNotificationWithIcon("success", msg);
+      })
+      .catch(error => {
+        notificationUtil.openNotificationWithIcon("warning", error);
+      });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
+  };
+
+  redirectToEditPanel = (record, isUpdate) => {
     const { history } = this.props;
     history.push({
-      pathname: "/app/treatment/patientInfo/editPatientPanle",
-      treatmentRecord: record
+      pathname: "/app/treatment/patientInfo/editPatientPanel",
+      patient: record,
+      isUpdate: isUpdate
     });
-    // return (
-    //   <Redirect
-    //     to="/app/treatment/patientInfo/editTreatmentRecord"
-    //     treatmentRecord={record}
-    //   />
-    // );
   };
 
   render() {
@@ -30,7 +75,7 @@ class PatientDocPanel extends Component {
         title: "病人编号",
         dataIndex: "id",
         key: "id",
-        width: 200,
+        width: 250,
         fixed: "left"
       },
       {
@@ -89,11 +134,16 @@ class PatientDocPanel extends Component {
         render: (text, record) => {
           return (
             <span>
-              <span onClick={() => this.redirectToEditPanel(record)}>编辑</span>
+              <span onClick={() => this.redirectToEditPanel(record, true)}>
+                编辑
+              </span>
               <Divider type="vertical" />
               <span
                 onClick={() => {
-                  return null;
+                  this.setState({
+                    targetPatient: record,
+                    visible: true
+                  });
                 }}
               >
                 删除
@@ -103,23 +153,6 @@ class PatientDocPanel extends Component {
         }
       }
     ];
-    const dataSource = [
-      {
-        key: "1",
-        id: "ax43556fh893hsdjksj",
-        name: "张三",
-        id_number: "430909090909090",
-        area: "china,hunan,changde,lixian",
-        contacts: {
-          qq: "14989893820",
-          wechat: "18787878787",
-          phone_number: "187878787787",
-          email: "1878293892@qq.com"
-        },
-        special_disease: ["糖尿病", "高血压"],
-        extra_meta: "正常"
-      }
-    ];
 
     return (
       <div style={{ paddingLeft: "5px" }}>
@@ -127,13 +160,21 @@ class PatientDocPanel extends Component {
           bordered
           extra={[
             <Button key="3" type="primary">
-              <Link to="/app/treatment/patientInfo/editPatientPanle">
+              <Link to="/app/treatment/patientInfo/editPatientPanel">
                 新增记录
               </Link>
             </Button>
           ]}
           style={{ marginBottom: "5px" }}
         />
+        <Modal
+          title="提示"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <p>你确定要删除{this.state.targetPatient.name}吗</p>
+        </Modal>
         <Row gutter={24} style={{ margin: "0px" }} type="flex">
           <Col span={7} style={{ padding: "0px" }}>
             <Search
@@ -147,7 +188,8 @@ class PatientDocPanel extends Component {
           <Table
             bordered
             columns={columns}
-            dataSource={dataSource}
+            dataSource={this.props.patients}
+            rowKey="id"
             scroll={{ x: 2000, y: 300 }}
           />
         </Row>
@@ -156,4 +198,15 @@ class PatientDocPanel extends Component {
   }
 }
 
-export default PatientDocPanel;
+const mapStateToProps = state => ({
+  patients: getPatients(state)
+});
+
+const mapDispatchToProps = dispatch => ({
+  findAllPatients: bindActionCreators(findAllPatients, dispatch),
+  deleteOnePatients: bindActionCreators(deleteOnePatients, dispatch)
+});
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PatientDocPanel);

@@ -82,7 +82,13 @@ export const checkLogin = (session_id = "") => dispatch => {
     const requestHeader = {
       session_id: session_id
     };
-    return httpUtil(api_path.check_login_url, null, requestHeader, "POST").then(
+    return httpUtil(
+      api_path.check_login_url,
+      null,
+      null,
+      requestHeader,
+      "POST"
+    ).then(
       response => {
         response.json().then(response_json => {
           if (response_json.rtn === 0) {
@@ -125,7 +131,13 @@ export const doLogin = (account_id, account_password, remember) => dispatch => {
     remember: remember
   };
   return new Promise((resolve, reject) => {
-    httpUtil(api_path.login_url, requestParams, requestHeader, "POST").then(
+    httpUtil(
+      api_path.login_url,
+      null,
+      requestParams,
+      requestHeader,
+      "POST"
+    ).then(
       response => {
         response.json().then(response_json => {
           if (response_json.rtn === 0) {
@@ -180,7 +192,7 @@ export const doRegister = data => dispatch => {
       }
     };
     console.log("account==>", account);
-    httpUtil(api_path.account_url, account, null, "POST").then(
+    httpUtil(api_path.account_url, null, account, null, "POST").then(
       response => {
         response.json().then(response_json => {
           if (response_json.rtn === 0) {
@@ -221,7 +233,7 @@ export const doUpdate = (updated_info, session_id) => dispatch => {
     let header = {
       session_id: session_id
     };
-    httpUtil(api_path.account_url, updated_info, header, "PUT").then(
+    httpUtil(api_path.account_url, null, updated_info, header, "PUT").then(
       response => {
         response.json().then(response_json => {
           if (response_json.rtn !== 0) {

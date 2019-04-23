@@ -13,39 +13,19 @@ import * as notificationUtil from "@/action/common/openNotification";
 const FormItem = Form.Item;
 
 class Login extends React.Component {
-  componentWillMount() {
-    let reg = new RegExp('"', "g");
-    let session_id = localStorage.getItem("session_id");
-    if (!session_id) {
-      return;
-    }
-    console.log("登录界面做了一次check");
-    session_id = session_id.replace(reg, "");
-    console.log("checkLogin:", session_id);
-    if (!session_id) {
-      return;
-    }
-    const { checkLogin, history } = this.props;
-    checkLogin(session_id)
-      .then(() => {
-        history.push("/");
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
         const { doLogin } = this.props;
-        doLogin(values.userName, values.password, values.remember).then((msg)=>{
-          notificationUtil.openNotificationWithIcon("success",msg);
-        }).catch((e)=>{
-          notificationUtil.openNotificationWithIcon("error",e);
-        })
+        doLogin(values.userName, values.password, values.remember)
+          .then(msg => {
+            notificationUtil.openNotificationWithIcon("success", msg);
+          })
+          .catch(e => {
+            notificationUtil.openNotificationWithIcon("error", e);
+          });
       }
     });
   };
@@ -59,9 +39,6 @@ class Login extends React.Component {
       if (state && state.from) {
         return <Redirect to={state.from} />;
       }
-      return <Redirect to="/" />;
-    }
-    if(localStorage.getItem("session_id")){
       return <Redirect to="/" />;
     }
     return (

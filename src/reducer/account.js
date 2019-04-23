@@ -1,7 +1,8 @@
 import * as types from "../action/type";
 
 const initState = {
-  session_id: localStorage.getItem("session_id")
+  session_id: localStorage.getItem("session_id"),
+  isLoading: false
 };
 
 export default (state = initState, action) => {
@@ -14,26 +15,29 @@ export default (state = initState, action) => {
       return {
         ...state,
         session_id: action.data.session_id,
-        checked: true
+        checked: true,
+        isLoading: false
       };
     case types.ACCOUNT_LOGIN_FAILED:
       localStorage.setItem("session_id", "");
-      return { ...state, user: {}, checked: false };
+      return { ...state, user: {}, checked: false, isLoading: false };
     case types.ACCOUNT_LOGINCHECK_SUCCESS:
-      return { ...state, user: action.data, checked: true };
+      return { ...state, user: action.data, checked: true, isLoading: false };
     case types.ACCOUNT_LOGINCHECK_FAILED:
-      return { ...state, user: {}, checked: false };
+      localStorage.setItem("session_id", "");
+      return { ...state, user: {}, checked: false, isLoading: false };
     case types.FLUSH_ACCOUNT:
       localStorage.clear();
-      return { checked: false };
+      return { checked: false, isLoading: false };
     case types.ACCOUNT_REGISTER_SUCCESS:
-      return state;
+      return { ...state, isLoading: false };
     case types.ACCOUNT_REGISTER_FAILED:
-      return state;
+      return { ...state, isLoading: false };
     case types.ACCOUNT_UPDATE_SUCCESS:
       return {
         ...state,
-        user: action.data
+        user: action.data,
+        isLoading: false
       };
     default:
       return state;

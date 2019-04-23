@@ -57,7 +57,7 @@ class PatientMainPanel extends Component {
                   component={EditTreatmentPanel}
                 />
                 <Route
-                  path={`${match.path}/editPatientPanle`}
+                  path={`${match.path}/editPatientPanel`}
                   component={EditPatientPanel}
                 />
                 <Route

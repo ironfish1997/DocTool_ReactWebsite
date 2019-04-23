@@ -83,16 +83,6 @@ class App extends Component {
                   <Route render={() => <Redirect to="/404" />} />
                 </Switch>
               </Content>
-              {/* <Footer
-                style={{
-                  textAlign: "center",
-                  background: "#22075e",
-                  color: "white"
-                }}
-              >
-                DocTool System ©{new Date().getFullYear()} Created by
-                1481980097@qq.com
-              </Footer> */}
             </Layout>
           </Layout>
         </Layout>

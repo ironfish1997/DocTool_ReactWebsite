@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { Form, Input, Row, Col, Card, Button, DatePicker, Select } from "antd";
 import { connect } from "react-redux";
-// import * as notificationUtil from "@/action/common/openNotification";
 const { Option } = Select;
-// import * as notificationUtil from "@/action/common/openNotification";
 const { TextArea } = Input;
 
 /**
@@ -106,28 +104,14 @@ class DoReviewPanel extends Component {
             {/* </Col> */}
             {/** 就诊开始日期 */}
             {/* <Col span={12} style={{ display: "block" }}> */}
-            <Form.Item label="复查开始日期">
-              {getFieldDecorator("start_time", {
+            <Form.Item label="复查日期">
+              {getFieldDecorator("review_time", {
                 rules: [
                   {
                     required: true,
-                    message: "请填写复查开始日期!"
                   }
                 ]
-              })(<DatePicker placeholder="请选择复查开始时间" />)}
-            </Form.Item>
-            {/* </Col> */}
-            {/** 就诊结束日期 */}
-            {/* <Col span={12} style={{ display: "block" }}> */}
-            <Form.Item label="复查结束日期">
-              {getFieldDecorator("end_time", {
-                rules: [
-                  {
-                    required: true,
-                    message: "请填写复查结束日期!"
-                  }
-                ]
-              })(<DatePicker placeholder="请选择复查结束时间" />)}
+              })(<DatePicker placeholder="请选择复查时间" />)}
             </Form.Item>
             {/* </Col> */}
             {/* 备注 */}

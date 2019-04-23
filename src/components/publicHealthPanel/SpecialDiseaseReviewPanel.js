@@ -29,7 +29,6 @@ class SpecialDiseaseReviewPanel extends Component {
   state = {
     unReviewPatients: [
       {
-        id: "5cac33389d00e58416436e78",
         name: "张三多",
         area: "china,hunan,changde,lixian",
         contacts: {
@@ -43,7 +42,6 @@ class SpecialDiseaseReviewPanel extends Component {
         id_number: "439982039203920392"
       },
       {
-        id: "5cac33489d00e58416436e79",
         name: "李四",
         area: "china,hunan,changde,lixian",
         contacts: {
@@ -60,110 +58,86 @@ class SpecialDiseaseReviewPanel extends Component {
     patientReviewRecords: [
       {
         key: "1",
-        id: "ax43556fh893hsdjksj",
         patient_id_number: "43098928839289238",
         disease_name: "感冒",
-        start_time: "2017-7-21",
-        end_time: "2017-7-23",
+        review_time: "2017-7-21",
         medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
       },
       {
         key: "2",
-        id: "sdilsajdlsalfkssss",
         patient_id_number: "430989288999289238",
         disease_name: "发烧",
-        start_time: "2018-7-21",
-        end_time: "2018-8-23",
+        review_time: "2018-7-21",
         medicines_record: "吃了退烧药"
       },
       {
         key: "3",
-        id: "ax43556fh893hsdjksj",
         patient_id_number: "43098928839289238",
         disease_name: "感冒",
-        start_time: "2017-7-21",
-        end_time: "2017-7-23",
+        review_time: "2017-7-21",
         medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
       },
       {
         key: "4",
-        id: "sdilsajdlsalfkssss",
         patient_id_number: "430989288999289238",
         disease_name: "发烧",
-        start_time: "2018-7-21",
-        end_time: "2018-8-23",
+        review_time: "2018-7-21",
         medicines_record: "吃了退烧药"
       },
       {
         key: "5",
-        id: "ax43556fh893hsdjksj",
         patient_id_number: "43098928839289238",
         disease_name: "感冒",
-        start_time: "2017-7-21",
-        end_time: "2017-7-23",
+        review_time: "2017-7-21",
         medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
       },
       {
         key: "6",
-        id: "sdilsajdlsalfkssss",
         patient_id_number: "430989288999289238",
         disease_name: "发烧",
-        start_time: "2018-7-21",
-        end_time: "2018-8-23",
+        review_time: "2018-7-21",
         medicines_record: "吃了退烧药"
       },
       {
         key: "7",
-        id: "ax43556fh893hsdjksj",
         patient_id_number: "43098928839289238",
         disease_name: "感冒",
-        start_time: "2017-7-21",
-        end_time: "2017-7-23",
+        review_time: "2017-7-21",
         medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
       },
       {
         key: "8",
-        id: "sdilsajdlsalfkssss",
         patient_id_number: "430989288999289238",
         disease_name: "发烧",
-        start_time: "2018-7-21",
-        end_time: "2018-8-23",
+        review_time: "2018-7-21",
         medicines_record: "吃了退烧药"
       },
       {
         key: "9",
-        id: "ax43556fh893hsdjksj",
         patient_id_number: "43098928839289238",
         disease_name: "感冒",
-        start_time: "2017-7-21",
-        end_time: "2017-7-23",
+        review_time: "2017-7-21",
         medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
       },
       {
         key: "10",
-        id: "sdilsajdlsalfkssss",
         patient_id_number: "430989288999289238",
         disease_name: "发烧",
-        start_time: "2018-7-21",
-        end_time: "2018-8-23",
+        review_time: "2018-7-21",
         medicines_record: "吃了退烧药"
       },
       {
         key: "11",
-        id: "ax43556fh893hsdjksj",
         patient_id_number: "43098928839289238",
         disease_name: "感冒",
-        start_time: "2017-7-21",
-        end_time: "2017-7-23",
+        review_time: "2017-7-21",
         medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
       },
       {
         key: "12",
-        id: "sdilsajdlsalfkssss",
         patient_id_number: "430989288999289238",
         disease_name: "发烧",
-        start_time: "2018-7-21",
-        end_time: "2018-8-23",
+        review_time: "2018-7-21",
         medicines_record: "吃了退烧药"
       }
     ],
@@ -188,15 +162,9 @@ class SpecialDiseaseReviewPanel extends Component {
         width: 200
       },
       {
-        title: "复查开始时间",
-        dataIndex: "start_time",
-        key: "start_time",
-        width: 150
-      },
-      {
-        title: "复查结束时间",
-        dataIndex: "end_time",
-        key: "end_time",
+        title: "复查时间",
+        dataIndex: "review_time",
+        key: "review_time",
         width: 150
       },
       {
@@ -228,11 +196,7 @@ class SpecialDiseaseReviewPanel extends Component {
   render() {
     return (
       <Layout className="specialDiseaseReviewPanel">
-        <PageHeader
-          title={`特殊病症复查`}
-          bordered
-          extra={[]}
-        />
+        <PageHeader title={`特殊病症复查`} bordered extra={[]} />
         <Layout>
           <Sider
             className="left_sider"
