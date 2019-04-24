@@ -65,25 +65,30 @@ export const doAddPatient = (session_id, patient) => dispatch => {
     let header = {
       session_id: session_id
     };
-    httpUtil(api_path.patient_url, null, patient, header, "POST").then(
-      response => {
-        response.json().then(response_json => {
-          if (response_json.rtn !== 0) {
-            console.error("update user info failed===>", response_json.msg);
-            dispatch(addPatientFailed(response_json.msg));
-            return reject("新增病人失败");
-          } else {
-            console.log("update user info success!===>", response_json.msg);
-            dispatch(addPatientSuccess(response_json.data));
-            return resolve("新增病人成功");
-          }
-        });
-      },
-      error => {
+    httpUtil(api_path.patient_url, null, patient, header, "POST")
+      .then(
+        response => {
+          response.json().then(response_json => {
+            if (response_json.rtn !== 0) {
+              console.error("update user info failed===>", response_json.msg);
+              dispatch(addPatientFailed(response_json.msg));
+              return reject("新增病人失败");
+            } else {
+              console.log("update user info success!===>", response_json.msg);
+              dispatch(addPatientSuccess(response_json.data));
+              return resolve("新增病人成功");
+            }
+          });
+        },
+        error => {
+          console.log("新增病人失败!===>", error);
+          return reject("新增病人失败");
+        }
+      )
+      .catch(error => {
         console.log("新增病人失败!===>", error);
-        return resolve("新增病人失败");
-      }
-    );
+        return reject("新增病人失败");
+      });
   });
 };
 
@@ -117,7 +122,7 @@ export const doUpdatePatient = (session_id, patient) => dispatch => {
       },
       error => {
         console.log("更新病人失败!===>", error);
-        return resolve("更新病人失败");
+        return reject("更新病人失败");
       }
     );
   });

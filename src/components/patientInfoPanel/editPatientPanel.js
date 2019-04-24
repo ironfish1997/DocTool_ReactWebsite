@@ -39,7 +39,7 @@ class EditPatientPanel extends React.Component {
         });
         values.area = areaString.substring(1);
         //特殊病症可能是数组也可能是字符串，故如果是字符串需要转换成数组
-        if (!Array.isArray(values.special_disease)) {
+        if (values.special_disease&&!Array.isArray(values.special_disease)) {
           values.special_disease = values.special_disease.split(/,|，/);
         }
         //如果是更新数据，则请求更新病人的接口
