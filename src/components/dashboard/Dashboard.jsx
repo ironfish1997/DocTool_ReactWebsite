@@ -4,11 +4,14 @@ import { Row, Col, Card, Icon, List, Button } from "antd";
 import "./dashboard.less";
 import * as api_path from "@/config/api_path";
 import { httpUtil } from "@/utils";
+import { connect } from "react-redux";
 // import EchartsViews from './EchartsViews';
 // import EchartsProjects from './EchartsProjects';
-import MessageSpan from "./MessageSpan";
+import MessageSpan from "../common/MessageSpan";
 import { option } from "./echartConfig";
+import { doGetUnreviewSpecialPatients } from "@/action/publicService";
 import indexedDBUtilBuilder from "@/utils/indexDBUtil";
+import { bindActionCreators } from "redux";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -17,7 +20,8 @@ class Dashboard extends React.Component {
     this.state = {
       unReviewPatients: [],
       options: { ...option },
-      indexedDBUtil: indexedDBUtil
+      indexedDBUtil: indexedDBUtil,
+      drawerVisible: false
     };
   }
   componentDidMount() {
@@ -44,39 +48,23 @@ class Dashboard extends React.Component {
         });
       });
     });
-    this.setState({
-      unReviewPatients: [
-        {
-          id: "5cac33389d00e58416436e78",
-          name: "张三多",
-          area: "china,hunan,changde,lixian",
-          contacts: {
-            wechat: null,
-            qq: null,
-            phone_number: "19898989898",
-            email: null
-          },
-          extra_meta: null,
-          special_disease: null,
-          id_number: "439982039203920392"
-        },
-        {
-          id: "5cac33489d00e58416436e79",
-          name: "李四",
-          area: "china,hunan,changde,lixian",
-          contacts: {
-            wechat: null,
-            qq: null,
-            phone_number: "1982392131231",
-            email: null
-          },
-          extra_meta: null,
-          special_disease: null,
-          id_number: "430989889283928392"
-        }
-      ]
-    });
+    if (!this.props.account) {
+      setTimeout(
+        () =>
+          this.props.doGetUnreviewSpecialPatients(
+            localStorage.getItem("session_id"),
+            this.props.account.area
+          ),
+        2000
+      );
+    } else {
+      this.props.doGetUnreviewSpecialPatients(
+        localStorage.getItem("session_id"),
+        this.props.account.area
+      );
+    }
   }
+
   /**
    * 跳转到复查编辑页面
    */
@@ -88,18 +76,6 @@ class Dashboard extends React.Component {
     });
   };
   render() {
-    this.state.indexedDBUtil
-      .findOne("patients", "123")
-      .then(response =>
-        response.json().then(response => {
-          console.log("find one");
-          console.log(response);
-        })
-      )
-      .catch(error => {
-        console.log("find one");
-        console.log(error);
-      });
     return (
       <div className="main">
         <Row gutter={10} type="flex">
@@ -169,17 +145,14 @@ class Dashboard extends React.Component {
                 <span className="card-tool">
                   <Icon type="sync" />
                 </span>
-                <ul className="list-group no-border">
-                  <li className="list-group-item">
-                    <MessageSpan msgValue={"糖尿病信息采集开始了"} />
-                  </li>
-                  <li className="list-group-item">
-                    <MessageSpan msgValue={"增加新病患信息"} />
-                  </li>
-                  <li className="list-group-item">
-                    <MessageSpan msgValue={"发送通知短信成功"} />
-                  </li>
-                </ul>
+                <List
+                  dataSource={this.props.permanentNotifications}
+                  renderItem={item => (
+                    <List.Item>
+                      <MessageSpan msgValue={item} />
+                    </List.Item>
+                  )}
+                />
               </Card>
             </div>
           </Col>
@@ -192,10 +165,10 @@ class Dashboard extends React.Component {
                 title="本月未复查患者清单"
               >
                 <List
-                  dataSource={this.state.unReviewPatients}
+                  dataSource={this.props.unReviewPatients}
                   renderItem={item => {
                     return (
-                      <List.Item>
+                      <List.Item key={item.id}>
                         {item.id_number} {item.name}
                         <Button
                           type="primary"
@@ -217,4 +190,20 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+const mapStateToProps = state => ({
+  permanentNotifications: state.notification.permanentNotifications,
+  unReviewPatients: state.publicService.unReviewPatients,
+  account: state.account.user
+});
+
+const mapDispatchToProps = dispatch => ({
+  doGetUnreviewSpecialPatients: bindActionCreators(
+    doGetUnreviewSpecialPatients,
+    dispatch
+  )
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Dashboard);

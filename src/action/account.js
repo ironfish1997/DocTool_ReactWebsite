@@ -142,7 +142,7 @@ export const doLogin = (account_id, account_password, remember) => dispatch => {
         response.json().then(response_json => {
           if (response_json.rtn === 0) {
             dispatch(loginSuccess(response_json.data));
-            resolve("登录成功");
+            return resolve("登录成功");
           } else {
             //如果是账号密码有误，则返回码是-10030
             let msg = "登录失败";
@@ -150,13 +150,13 @@ export const doLogin = (account_id, account_password, remember) => dispatch => {
               msg = "密码或账号有误";
             }
             dispatch(loginFailed(response_json.msg));
-            reject(msg);
+            return reject(msg);
           }
         });
       },
       error => {
         dispatch(loginFailed(error));
-        reject("登录失败");
+        return reject("登录失败");
       }
     );
   });
@@ -175,8 +175,7 @@ export const doRegister = data => dispatch => {
       data.name === null ||
       data.area.length === 0
     ) {
-      reject("lack of information");
-      return;
+      return reject("lack of information");
     }
     let account = {
       account_id: data.account_id,

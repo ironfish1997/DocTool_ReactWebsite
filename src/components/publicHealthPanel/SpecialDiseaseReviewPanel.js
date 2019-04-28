@@ -9,58 +9,111 @@ import {
   Col,
   Input,
   Button,
-  //   Select,
-  //   Row,
-  //   Col,
-  //   Divider,
-  //   DatePicker,
-  //   Button,
-  PageHeader
-  //   Icon,
+  PageHeader,
+  Divider,
+  Modal
 } from "antd";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import {
+  doGetUnreviewSpecialPatients,
+  doGetReviewRow,
+  doDeleteReviewRow
+} from "@/action/publicService";
+import * as notificationUtil from "@/action/common/openNotification";
 // import { Switch, Route, Link } from "react-router-dom";
 import "./index.less";
+import moment from "moment";
 const { Sider, Content } = Layout;
 const Search = Input.Search;
-// const Option = Select.Option;
-// const { Paragraph, Text } = Typography;
 
 class SpecialDiseaseReviewPanel extends Component {
-  state = {
-    unReviewPatients: [
-      {
-        name: "张三多",
-        area: "china,hunan,changde,lixian",
-        contacts: {
-          wechat: null,
-          qq: null,
-          phone_number: "19898989898",
-          email: null
-        },
-        extra_meta: null,
-        special_disease: null,
-        id_number: "439982039203920392"
-      }
-    ],
-    patientReviewRecords: [
-      {
-        key: "1",
-        patient_id_number: "43098928839289238",
-        disease_name: "感冒",
-        review_time: "2017-7-21",
-        medicines_record: "吃了感冒灵,氨苄西林，感觉好了很多了"
-      }
-    ]
+  constructor(props) {
+    super(props);
+    this.state = {
+      patientReviewRecords: [],
+      targetReviewRow: {},
+      visible: false
+    };
+  }
+
+  componentDidMount() {
+    if (!this.props.account) {
+      setTimeout(
+        () =>
+          this.props.doGetUnreviewSpecialPatients(
+            localStorage.getItem("session_id"),
+            this.props.account.area
+          ),
+        2000
+      );
+    } else {
+      this.props.doGetUnreviewSpecialPatients(
+        localStorage.getItem("session_id"),
+        this.props.account.area
+      );
+    }
+  }
+
+  handleOk = e => {
+    this.setState({
+      visible: false
+    });
+    this.props
+      .doDeleteReviewRow(
+        localStorage.getItem("session_id"),
+        this.state.targetReviewRow.id
+      )
+      .then(msg => {
+        notificationUtil.openNotificationWithIcon("success", msg);
+      })
+      .catch(error => {
+        notificationUtil.openNotificationWithIcon("warning", error);
+      });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
+  };
+
+  /**
+   * 跳转到复查编辑页面
+   */
+  onReviewBtnClick = patientInfo => {
+    const { history } = this.props;
+    history.push({
+      pathname: "/app/publicHealth/doReview",
+      patientInfo: patientInfo
+    });
+  };
+
+  searchReviewRow = patient_id_number => {
+    doGetReviewRow(localStorage.getItem("session_id"), patient_id_number)
+      .then(data => {
+        notificationUtil.openNotificationWithIcon("success", "查询成功");
+        data.map((v, k) => {
+          v.review_time = moment(v.review_time)
+            .toDate()
+            .toLocaleDateString();
+          return null;
+        });
+        console.log(data);
+        this.setState({
+          patientReviewRecords: data
+        });
+      })
+      .catch(error => {
+        notificationUtil.openNotificationWithIcon("error", "查询失败");
+        this.setState({
+          patientReviewRecords: []
+        });
+      });
   };
 
   columns = [
-    {
-      title: "复查记录编号",
-      dataIndex: "id",
-      key: "id",
-      width: 250,
-      fixed: "left"
-    },
     {
       title: "病症名称",
       dataIndex: "disease_name",
@@ -90,23 +143,45 @@ class SpecialDiseaseReviewPanel extends Component {
       dataIndex: "extra_meta",
       key: "extra_meta",
       width: 200
+    },
+    {
+      title: "操作",
+      key: "action",
+      width: 150,
+      render: (text, record) => {
+        return (
+          <span>
+            {/* <span onClick={() => this.redirectToEditPanel(record, true)}>
+              编辑
+            </span>
+            <Divider type="vertical" /> */}
+            <span
+              onClick={() => {
+                this.setState({
+                  targetTreatment: record,
+                  visible: true
+                });
+              }}
+            >
+              删除
+            </span>
+          </span>
+        );
+      }
     }
   ];
-
-  /**
-   * 跳转到复查编辑页面
-   */
-  onReviewBtnClick = patientInfo => {
-    const { history } = this.props;
-    history.push({
-      pathname: "/app/publicHealth/doReview",
-      patientInfo: patientInfo
-    });
-  };
 
   render() {
     return (
       <Layout className="specialDiseaseReviewPanel">
+        <Modal
+          title="提示"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <p>你确定要删除{this.state.targetReviewRow.name}吗</p>
+        </Modal>
         <PageHeader title={`特殊病症复查`} bordered extra={[]} />
         <Layout>
           <Sider
@@ -124,7 +199,7 @@ class SpecialDiseaseReviewPanel extends Component {
               title="本月未复查患者清单"
             >
               <List
-                dataSource={this.state.unReviewPatients}
+                dataSource={this.props.unReviewPatients}
                 renderItem={item => {
                   return (
                     <List.Item>
@@ -153,13 +228,14 @@ class SpecialDiseaseReviewPanel extends Component {
                 <Col span={7} style={{ padding: "0px" }}>
                   <Search
                     placeholder="输入病人身份证号搜索记录"
-                    onSearch={value => console.log(value)}
+                    onSearch={value => this.searchReviewRow(value)}
                     enterButton
                   />
                 </Col>
               </Row>
               <Table
                 bordered
+                rowKey="id"
                 columns={this.columns}
                 dataSource={this.state.patientReviewRecords}
                 scroll={{ x: 1250, y: 600 }}
@@ -172,4 +248,20 @@ class SpecialDiseaseReviewPanel extends Component {
   }
 }
 
-export default SpecialDiseaseReviewPanel;
+const mapStateToProps = state => ({
+  unReviewPatients: state.publicService.unReviewPatients,
+  account: state.account.user
+});
+
+const mapDispatchToProps = dispatch => ({
+  doGetUnreviewSpecialPatients: bindActionCreators(
+    doGetUnreviewSpecialPatients,
+    dispatch
+  ),
+  doDeleteReviewRow: bindActionCreators(doDeleteReviewRow, dispatch)
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SpecialDiseaseReviewPanel);

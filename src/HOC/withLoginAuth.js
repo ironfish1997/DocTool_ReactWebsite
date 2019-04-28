@@ -15,7 +15,7 @@ export const withLoginAuth = WrappedComponent => {
       };
     }
 
-    componentDidMount() {
+    componentWillMount() {
       if (!this.state.checked) {
         // console.log("CRoter:", this.props);
         const { account, checkLogin, history } = this.props;

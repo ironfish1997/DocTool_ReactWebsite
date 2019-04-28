@@ -1,7 +1,19 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import { Form, Input, Row, Col, Card, Button, DatePicker, Select } from "antd";
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Card,
+  Button,
+  DatePicker,
+  Select,
+  message
+} from "antd";
 import { connect } from "react-redux";
+import { doSaveReviewRow } from "@/action/publicService";
+import * as notificationUtil from "@/action/common/openNotification";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -30,6 +42,20 @@ class DoReviewPanel extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        values.review_time = values.review_time.valueOf();
+        let session_id = localStorage.getItem("session_id");
+        message.loading("正在处理数据，请稍候", 0);
+        doSaveReviewRow(session_id, values)
+          .then(data => {
+            message.destroy();
+            notificationUtil.openNotificationWithIcon("success", "保存成功");
+            let { history } = this.props;
+            history.goBack();
+          })
+          .catch(error => {
+            message.destroy();
+            notificationUtil.openNotificationWithIcon("error", "保存失败");
+          });
       }
     });
   };
@@ -108,7 +134,7 @@ class DoReviewPanel extends Component {
               {getFieldDecorator("review_time", {
                 rules: [
                   {
-                    required: true,
+                    required: true
                   }
                 ]
               })(<DatePicker placeholder="请选择复查时间" />)}
