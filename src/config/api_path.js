@@ -13,4 +13,8 @@ export const getUnreviewSpecialPatients_url =
   "http:///10.100.50.247:8080/specialPatient/getUnreviewSpecialPatients";
 export const getReviewRow_url =
   "http://localhost:8080/specialPatient/getReviewRecord";
-export const saveReviewRow_url = "http://10.100.50.247:8080/specialPatient/saveReviewRecord";
+export const saveReviewRow_url =
+  "http://10.100.50.247:8080/specialPatient/saveReviewRecord";
+export const deleteReviewRow_url =
+  "http://10.100.50.247:8080/specialPatient/deleteReviewRecord";
+export const orderItem_url = "http://10.100.50.247:8085/order";
