@@ -13,6 +13,9 @@ import {
 } from "antd";
 import { connect } from "react-redux";
 import { SelectCustom } from "../common";
+import { bindActionCreators } from "redux";
+import { findOrderByAccountId } from "@/action/order";
+// import * as notificationUtil from "@/action/common/openNotification";
 const Panel = Collapse.Panel;
 
 class ItemQueryPanel extends Component {
@@ -27,100 +30,33 @@ class ItemQueryPanel extends Component {
   }
 
   componentDidMount() {
-    //这里需要异步加载
-    let items = [
-      {
-        key: "1",
-        id: "1", //订单号
-        date: new Date().getTime(), //订单日期
-        certification_status: true, //证照情况
-        supply_unit: "常德毕盛医药", //供货单位
-        salesman_name: "武斌", //销售员姓名
-        salesman_phone: 13876545362, //销售员电话
-        medicine_list: [
-          {
-            id: "123456", //药物信息编号（订单号+药物编号）
-            medicine_name: "阿莫西林分散片", //药物名称
-            produce_company: "湖南万众药业", //生产厂家名称
-            approval_number: "gb28181", //批注文号
-            size: "23.6", //药物规格
-            formulation: "一型剂", //剂型
-            batch_number: "xx3064", //批号
-            unit_price: 130, //单价
-            unit: "瓶", //单位
-            count: 10, //数量
-            expire_date: "2020-03-11" //有效期
-          },
-          {
-            id: "12345678", //药物信息编号（订单号+药物编号）
-            medicine_name: "氨苄西林分散片", //药物名称
-            produce_company: "湖南万众药业", //生产厂家名称
-            approval_number: "gb28181", //批注文号
-            size: "24", //药物规格
-            formulation: "一型剂", //剂型
-            batch_number: "xx3064", //批号
-            unit_price: 130, //单价
-            unit: "瓶", //单位
-            count: 10, //数量
-            expire_date: "2020-03-11" //有效期
-          }
-        ], //订单内药物信息
-        extra_meta: {} //其他信息，备用
-      },
-      {
-        key: "2",
-        id: "2", //订单号
-        date: new Date().getTime(), //订单日期
-        certification_status: true, //证照情况
-        supply_unit: "常德毕盛医药", //供货单位
-        salesman_name: "吴雷", //销售员姓名
-        salesman_phone: 18872637827, //销售员电话
-        medicine_list: [
-          {
-            id: "123456", //药物信息编号（订单号+药物编号）
-            medicine_name: "阿莫西林分散片", //药物名称
-            produce_company: "湖南万众药业", //生产厂家名称
-            approval_number: "gb28181", //批注文号
-            size: "23.6", //药物规格
-            formulation: "一型剂", //剂型
-            batch_number: "xx3064", //批号
-            unit_price: 130, //单价
-            unit: "瓶", //单位
-            count: 10, //数量
-            expire_date: 1586763987 //有效期
-          },
-          {
-            id: "12345678", //药物信息编号（订单号+药物编号）
-            medicine_name: "氨苄西林分散片", //药物名称
-            produce_company: "湖南万众药业", //生产厂家名称
-            approval_number: "gb28181", //批注文号
-            size: "24", //药物规格
-            formulation: "一型剂", //剂型
-            batch_number: "xx3064", //批号
-            unit_price: 130, //单价
-            unit: "瓶", //单位
-            count: 10, //数量
-            expire_date: 1586763987 //有效期
-          }
-        ], //订单内药物信息
-        extra_meta: {} //其他信息，备用
-      }
-    ];
-    //需要筛选出所有的供货单位
-    let supply_unit_set = new Set();
-    //需要筛选出所有的销售员姓名
-    let salesman_name_set = new Set();
-    items.map((v, k) => {
-      supply_unit_set.add(v.supply_unit);
-      salesman_name_set.add(v.salesman_name);
-      return null;
-    });
-    this.setState({
-      ...this.state,
-      items,
-      supply_unit: [...supply_unit_set],
-      salesman_name: [...salesman_name_set]
-    });
+    this.props
+      .findOrderByAccountId(
+        localStorage.getItem("session_id"),
+        this.props.account.account_id
+      )
+      .then(items => {
+        //这里需要异步加载
+        //需要筛选出所有的供货单位
+        let supply_unit_set = new Set();
+        //需要筛选出所有的销售员姓名
+        let salesman_name_set = new Set();
+        items.map((v, k) => {
+          supply_unit_set.add(v.supply_unit);
+          salesman_name_set.add(v.salesman_name);
+          return null;
+        });
+        this.setState({
+          ...this.state,
+          items,
+          supply_unit: [...supply_unit_set],
+          salesman_name: [...salesman_name_set]
+        });
+        console.log("药物订单信息查找成功");
+      })
+      .catch(error => {
+        console.log("药物订单信息查找失败");
+      });
   }
 
   redirectToPanel = (record, isEdit) => {
@@ -152,13 +88,6 @@ class ItemQueryPanel extends Component {
       });
     }
     const columns = [
-      {
-        title: "订单号",
-        dataIndex: "id",
-        key: "id",
-        width: 200,
-        fixed: "left"
-      },
       {
         title: "订单日期",
         dataIndex: "date",
@@ -276,10 +205,13 @@ class ItemQueryPanel extends Component {
 }
 
 const mapStateToProps = state => ({
-  ...state
+  account: state.account.user,
+  items: state.order.items
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  findOrderByAccountId: bindActionCreators(findOrderByAccountId, dispatch)
+});
 
 export default connect(
   mapStateToProps,

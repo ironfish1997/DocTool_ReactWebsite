@@ -26,7 +26,9 @@ class HeaderCustom extends Component {
   }
 
   componentDidMount() {
-    this.props.connectWebSocket(localStorage.getItem("session_id"));
+    if (localStorage.getItem("session_id")) {
+      this.props.connectWebSocket(localStorage.getItem("session_id"));
+    }
   }
 
   screenFull = () => {

@@ -80,8 +80,8 @@ class EditItemDetailPanel extends Component {
             <Form.Item label="证照情况">
               {getFieldDecorator("certification_status", {
                 initialValue: itemRecord
-                  ? itemRecord.certification_status + ""
-                  : "",
+                  ? itemRecord.certification_status+""
+                  : `false`,
                 rules: [
                   {
                     required: true,
@@ -125,7 +125,6 @@ class EditItemDetailPanel extends Component {
                 initialValue: itemRecord ? itemRecord.salesman_phone : "",
                 rules: [
                   {
-                    type: "number",
                     required: true,
                     message: "请输入销售员电话!"
                   }

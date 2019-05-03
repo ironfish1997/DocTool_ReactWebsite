@@ -10,7 +10,7 @@ import {
   Input,
   Button,
   PageHeader,
-  Divider,
+  // Divider,
   Modal
 } from "antd";
 import { bindActionCreators } from "redux";
@@ -45,7 +45,7 @@ class SpecialDiseaseReviewPanel extends Component {
             localStorage.getItem("session_id"),
             this.props.account.area
           ),
-        2000
+        5000
       );
     } else {
       this.props.doGetUnreviewSpecialPatients(
@@ -59,12 +59,16 @@ class SpecialDiseaseReviewPanel extends Component {
     this.setState({
       visible: false
     });
-    this.props
-      .doDeleteReviewRow(
-        localStorage.getItem("session_id"),
-        this.state.targetReviewRow.id
-      )
+    doDeleteReviewRow(
+      localStorage.getItem("session_id"),
+      this.state.targetReviewRow.id
+    )
       .then(msg => {
+        this.setState({
+          patientReviewRecords: this.state.patientReviewRecords.filter(v => {
+            return v.id !== this.state.targetReviewRow.id;
+          })
+        });
         notificationUtil.openNotificationWithIcon("success", msg);
       })
       .catch(error => {
@@ -158,7 +162,7 @@ class SpecialDiseaseReviewPanel extends Component {
             <span
               onClick={() => {
                 this.setState({
-                  targetTreatment: record,
+                  targetReviewRow: record,
                   visible: true
                 });
               }}
@@ -257,8 +261,7 @@ const mapDispatchToProps = dispatch => ({
   doGetUnreviewSpecialPatients: bindActionCreators(
     doGetUnreviewSpecialPatients,
     dispatch
-  ),
-  doDeleteReviewRow: bindActionCreators(doDeleteReviewRow, dispatch)
+  )
 });
 
 export default connect(

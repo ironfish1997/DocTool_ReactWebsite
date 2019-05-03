@@ -48,15 +48,13 @@ class Dashboard extends React.Component {
         });
       });
     });
-    if (!this.props.account) {
-      setTimeout(
-        () =>
-          this.props.doGetUnreviewSpecialPatients(
-            localStorage.getItem("session_id"),
-            this.props.account.area
-          ),
-        2000
-      );
+    if (!this.props.account || !this.props.account.area) {
+      setTimeout(() => {
+        this.props.doGetUnreviewSpecialPatients(
+          localStorage.getItem("session_id"),
+          this.props.account.area
+        );
+      }, 2000);
     } else {
       this.props.doGetUnreviewSpecialPatients(
         localStorage.getItem("session_id"),
