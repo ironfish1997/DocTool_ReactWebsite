@@ -125,5 +125,37 @@ export const doSaveReviewRow = (session_id, treatment) => {
 };
 
 export const doDeleteReviewRow = (session_id, treatment_id) => {
-  return new Promise((resolve, reject) => {});
+  return new Promise((resolve, reject) => {
+    if (!session_id || !treatment_id) {
+      console.error("doDeleteReviewRow失败:缺少信息");
+      return reject("删除失败");
+    }
+    let params = {
+      treatment_id
+    };
+    let headers = {
+      session_id
+    };
+    httpUtil(api_path.deleteReviewRow_url, params, null, headers, "DELETE")
+      .then(response =>
+        response
+          .json()
+          .then(response_json => {
+            if (response_json.rtn === 0) {
+              console.log("doDeleteReviewRow成功!");
+              return resolve("删除成功");
+            } else {
+              return reject(null);
+            }
+          })
+          .catch(error => {
+            console.error("doDeleteReviewRow失败:", error);
+            return reject("删除失败");
+          })
+      )
+      .catch(error => {
+        console.error("doDeleteReviewRow失败:", error);
+        return reject("删除失败");
+      });
+  });
 };
