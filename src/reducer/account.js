@@ -2,7 +2,8 @@ import * as types from "../action/type";
 
 const initState = {
   session_id: localStorage.getItem("session_id"),
-  isLoading: false
+  isLoading: false,
+  user: {}
 };
 
 export default (state = initState, action) => {

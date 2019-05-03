@@ -8,6 +8,7 @@ import programStatus from "./programStatus";
 import treatment from "./treatment";
 import notification from "./notification";
 import publicService from "./publicService";
+import order from "./order";
 
 export default combineReducers({
   account,
@@ -15,5 +16,6 @@ export default combineReducers({
   patient,
   treatment,
   notification,
-  publicService
+  publicService,
+  order
 });

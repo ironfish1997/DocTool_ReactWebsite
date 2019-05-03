@@ -27,7 +27,7 @@ export default (state = initState, action) => {
         }
         return null;
       });
-      return { ...state };
+      return JSON.parse(JSON.stringify(state));
     default:
       return { ...state, isNewNoti: false };
   }
