@@ -20,7 +20,8 @@ class ShowItemDetailPanel extends Component {
     history.push({
       pathname: "/app/medicineItems/detail",
       itemRecord: record,
-      isEdit: isEdit
+      isEdit: isEdit,
+      isUpdate: true
     });
   };
   render() {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Collapse, Button } from "antd";
+import { Button } from "antd";
 import MedicineDetailForm from "./MedicineDetail/SingleMedicineDetailForm";
-const Panel = Collapse.Panel;
+// const Panel = Collapse.Panel;
 /**
  *
  */
@@ -14,10 +14,11 @@ class EditableItemDetails extends Component {
         : []
     };
   }
+
   /**
    * 通过index删除掉药物订单详情
    */
-  deleteMedicineDetail = function(recordKey) {
+  deleteMedicineDetail = recordKey => {
     this.state.medicineItemDetails.splice(recordKey, 1);
     this.setState({
       ...this.state,
@@ -39,20 +40,14 @@ class EditableItemDetails extends Component {
         >
           新增
         </Button>
-        <Collapse defaultActiveKey={["1"]}>
-          {this.state.medicineItemDetails.map((v, k) => {
-            return (
-              <Panel header={v.medicine_name} key={k}>
-                <MedicineDetailForm
-                  medicineDetail={v}
-                  recordKey={k}
-                  {...this.props}
-                  deleteMedicineDetail={this.deleteMedicineDetail.bind(this)}
-                />
-              </Panel>
-            );
-          })}
-        </Collapse>
+        {/* <Panel header={v.medicine_name} key={k}> */}
+        <MedicineDetailForm
+          medicineDetail={this.state.medicineItemDetails}
+          recordKey="id"
+          {...this.props}
+          deleteMedicineDetail={this.deleteMedicineDetail.bind(this)}
+        />
+        {/* </Panel> */}
       </div>
     );
   }

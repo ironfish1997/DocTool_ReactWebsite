@@ -57,25 +57,6 @@ class TreatmentSearchPanel extends Component {
     });
   };
 
-  redirectToPanel = (record, isEdit) => {
-    const { history } = this.props;
-    let redirectDate = {};
-    if (record) {
-      this.state.items.map((v, k) => {
-        if (v.id === record.id) {
-          redirectDate = v;
-        }
-        return null;
-      });
-    }
-    console.log(record);
-    history.push({
-      pathname: "/app/medicineItems/detail",
-      itemRecord: redirectDate,
-      isEdit: isEdit
-    });
-  };
-
   searchTreatment = value => {
     this.setState({
       searchIdNumber: value
@@ -103,13 +84,13 @@ class TreatmentSearchPanel extends Component {
 
   render() {
     const columns = [
-      {
-        title: "就诊记录编号",
-        dataIndex: "id",
-        key: "id",
-        width: 300,
-        fixed: "left"
-      },
+      // {
+      //   title: "就诊记录编号",
+      //   dataIndex: "id",
+      //   key: "id",
+      //   width: 300,
+      //   fixed: "left"
+      // },
       {
         title: "病症名称",
         dataIndex: "disease_name",

@@ -1,7 +1,7 @@
-/**
- * Created by hao.cheng on 2017/4/13.
- */
 import React, { Component } from "react";
+import { connect } from "react-redux";
+// import { Link } from "react-router-dom";
+// import { bindActionCreators } from "redux";
 import { Layout } from "antd";
 import { withRouter } from "react-router-dom";
 import routes from "../routes/config";
@@ -17,14 +17,6 @@ class SiderCustom extends Component {
     };
   };
 
-  static onCollapse = collapsed => {
-    console.log(collapsed);
-    return {
-      collapsed,
-      // firstHide: collapsed,
-      mode: collapsed ? "vertical" : "inline"
-    };
-  };
   state = {
     collapsed: true,
     mode: "inline",
@@ -71,18 +63,20 @@ class SiderCustom extends Component {
           inlineCollapsed
           mode="inline"
           onOpenChange={this.openMenu}
+          account={this.props.account}
         />
-        <style>
-          {`
-                    #nprogress .spinner{
-                        left: "70px";
-                        right: 0 !important;
-                    }
-                    `}
-        </style>
       </Sider>
     );
   }
 }
 
-export default withRouter(SiderCustom);
+const mapStateToProps = state => ({
+  account: state.account.user
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(SiderCustom));

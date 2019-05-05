@@ -7,14 +7,16 @@ import {
   Divider,
   Form,
   Collapse,
-  PageHeader
+  PageHeader,
+  Modal
   // Input,
   // Icon
 } from "antd";
 import { connect } from "react-redux";
 import { SelectCustom } from "../common";
 import { bindActionCreators } from "redux";
-import { findOrderByAccountId } from "@/action/order";
+import { findOrderByAccountId, doDeleteOrder } from "@/action/order";
+import * as notificationUtil from "@/action/common/openNotification";
 // import * as notificationUtil from "@/action/common/openNotification";
 const Panel = Collapse.Panel;
 
@@ -25,7 +27,9 @@ class ItemQueryPanel extends Component {
     this.state = {
       items: [],
       supply_unit: [],
-      salesman_name: []
+      salesman_name: [],
+      targetOrder: {},
+      visible: false
     };
   }
 
@@ -70,11 +74,46 @@ class ItemQueryPanel extends Component {
         return null;
       });
     }
-    console.log(record);
+    console.log("location===>", redirectDate);
     history.push({
       pathname: "/app/medicineItems/detail",
       itemRecord: redirectDate,
-      isEdit: isEdit
+      isEdit: isEdit,
+      isUpdate: isEdit ? false : null
+    });
+  };
+
+  deleteOrder = id => {
+    this.props
+      .doDeleteOrder(localStorage.getItem("session_id"), id)
+      .then(response => {
+        console.info("deleteOrder:", response);
+        this.setState({
+          items: this.props.items
+        });
+        notificationUtil.openNotificationWithIcon("success", "删除成功");
+      })
+      .catch(error => {
+        console.error("deleteOrder:", error);
+        notificationUtil.openNotificationWithIcon(
+          "error",
+          "删除失败，请稍后再试"
+        );
+      });
+  };
+
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
+    this.deleteOrder(this.state.targetOrder.id);
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false
     });
   };
 
@@ -118,9 +157,12 @@ class ItemQueryPanel extends Component {
               </span>
               <Divider type="vertical" />
               <span
-                onClick={() => {
-                  return null;
-                }}
+                onClick={() =>
+                  this.setState({
+                    targetOrder: record,
+                    visible: true
+                  })
+                }
               >
                 删除
               </span>
@@ -144,6 +186,14 @@ class ItemQueryPanel extends Component {
     const { getFieldDecorator } = this.props.form;
     return (
       <div style={{ paddingLeft: "5px" }}>
+        <Modal
+          title="提示"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <p>你确定要删除吗</p>
+        </Modal>
         <PageHeader
           bordered
           extra={[
@@ -196,6 +246,7 @@ class ItemQueryPanel extends Component {
             bordered
             columns={columns}
             dataSource={items}
+            rowKey="id"
             scroll={{ x: 1000, y: 300 }}
           />
         </Row>
@@ -210,7 +261,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  findOrderByAccountId: bindActionCreators(findOrderByAccountId, dispatch)
+  findOrderByAccountId: bindActionCreators(findOrderByAccountId, dispatch),
+  doDeleteOrder: bindActionCreators(doDeleteOrder, dispatch)
 });
 
 export default connect(

@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
-import { doRegister } from "../../action/account";
-// import * as notificateUtil from "@/action/common/openNotification";
-import { Form, Input, Button, Card, DatePicker, Select } from "antd";
+import { doNewOrder, doUpdateOrder } from "@/action/order";
+import * as notificationUtil from "@/action/common/openNotification";
+import { Form, Input, Button, Card, DatePicker, Select, message } from "antd";
 import EditableItemDetails from "./EditableItemDetails";
 import moment from "moment";
+import "moment/locale/zh-cn";
 const Option = Select.Option;
 
 /**
@@ -25,13 +26,93 @@ const Option = Select.Option;
  */
 
 class EditItemDetailPanel extends Component {
-  state = {
-    itemRecord: {}
-  };
-  componentWillMount() {
+  constructor(props) {
+    super(props);
     const { location } = this.props;
-    this.setState({ itemRecord: location.itemRecord });
+    const { itemRecord, isUpdate } = location;
+    let itemState = itemRecord ? JSON.parse(JSON.stringify(itemRecord)) : [];
+    this.state = {
+      itemRecord: itemState,
+      isUpdate: isUpdate ? true : false
+    };
   }
+
+  handleSubmit = e => {
+    const { doNewOrder, doUpdateOrder } = this.props;
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      console.log("get form data:", values);
+      if (!err) {
+        values.date = values.date.valueOf();
+        let medicine_list = [];
+        Object.keys(values).forEach(key => {
+          //应该放进哪一个对象里
+          let medicine_list_index = (key + "").match(/[0-9]+/g);
+          if (medicine_list_index && medicine_list_index >= 0) {
+            let medicine_list_key = (key + "").replace(/[0-9]+/g, "");
+            let medicine_list_value = values[key];
+            if (medicine_list_key === "expire_date") {
+              medicine_list_value = values[key].valueOf();
+            }
+            if (!medicine_list[medicine_list_index]) {
+              medicine_list[medicine_list_index] = {};
+            }
+            medicine_list[medicine_list_index][
+              medicine_list_key
+            ] = medicine_list_value;
+            delete values[key];
+          }
+        });
+        values.medicine_list = medicine_list;
+        // console.log(values);
+        //如果是更新数据，则请求更新病人的接口
+        if (!this.state.isUpdate) {
+          message.loading("正在处理数据，请稍候", 0);
+          doNewOrder(
+            localStorage.getItem("session_id").replace(/"/g, ""),
+            values
+          )
+            .then(msg => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon(
+                "success",
+                "成功新增订单记录"
+              );
+              this.props.history.goBack();
+            })
+            .catch(e => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon(
+                "error",
+                "新增订单记录失败，请稍后重试"
+              );
+            });
+        } else {
+          message.loading("正在处理数据，请稍候", 0);
+          doUpdateOrder(
+            localStorage.getItem("session_id").replace(/"/g, ""),
+            values
+          )
+            .then(msg => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon(
+                "success",
+                "成功更新订单记录"
+              );
+              this.props.history.goBack();
+            })
+            .catch(e => {
+              message.destroy();
+              notificationUtil.openNotificationWithIcon(
+                "error",
+                "更新订单记录失败，请稍后重试"
+              );
+            });
+        }
+      }
+    });
+  };
+
   render() {
     const formItemLayout = {
       labelCol: {
@@ -64,6 +145,32 @@ class EditItemDetailPanel extends Component {
             /*{...formItemLayout}*/ onSubmit={this.handleSubmit}
             {...formItemLayout}
           >
+            {this.state.isUpdate ? (
+              <Form.Item label="订单编号">
+                {getFieldDecorator("id", {
+                  initialValue: itemRecord ? itemRecord.id : null,
+                  rules: [
+                    {
+                      required: true,
+                      message: "请填写订单编号"
+                    }
+                  ]
+                })(<Input readOnly="readonly" />)}
+              </Form.Item>
+            ) : null}
+            <Form.Item label="订购账户">
+              {getFieldDecorator("account_id", {
+                initialValue: itemRecord.account_id
+                  ? itemRecord.account_id
+                  : this.props.account.account_id,
+                rules: [
+                  {
+                    required: true,
+                    message: "请填写订购账户"
+                  }
+                ]
+              })(<Input readOnly="readOnly" />)}
+            </Form.Item>
             {/* 订单日期 */}
             <Form.Item label="订单日期">
               {getFieldDecorator("date", {
@@ -79,9 +186,9 @@ class EditItemDetailPanel extends Component {
             {/* 密码 */}
             <Form.Item label="证照情况">
               {getFieldDecorator("certification_status", {
-                initialValue: itemRecord
-                  ? itemRecord.certification_status+""
-                  : `false`,
+                initialValue: itemRecord.certification_status
+                  ? itemRecord.certification_status + ""
+                  : `true`,
                 rules: [
                   {
                     required: true,
@@ -136,7 +243,7 @@ class EditItemDetailPanel extends Component {
                 initialValue: itemRecord ? itemRecord.medicine_list : "",
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: "请输入至少一项药物详情!"
                   }
                 ]
@@ -164,11 +271,13 @@ class EditItemDetailPanel extends Component {
 }
 
 const mapStateToProps = state => ({
-  ...state
+  ...state,
+  account: state.account.user
 });
 
 const mapDispatchToProps = dispatch => ({
-  doRegister: bindActionCreators(doRegister, dispatch)
+  doUpdateOrder: bindActionCreators(doUpdateOrder, dispatch),
+  doNewOrder: bindActionCreators(doNewOrder, dispatch)
 });
 
 export default connect(
