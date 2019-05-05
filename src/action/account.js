@@ -227,12 +227,24 @@ export const doUpdate = (updated_info, session_id) => dispatch => {
     if (updated_info === null || session_id === null) {
       return reject("缺少信息");
     }
+    let account = {
+      account_id: updated_info.account_id,
+      account_password: updated_info.account_password,
+      name: updated_info.name,
+      area: updated_info.area,
+      contacts: {
+        wechat: updated_info.wechat,
+        qq: updated_info.qq,
+        phone_number: updated_info.phone_number,
+        email: updated_info.email
+      }
+    };
     //输出数据
     console.log("修改账户，需要修改的信息为==>", updated_info);
     let header = {
       session_id: session_id
     };
-    httpUtil(api_path.account_url, null, updated_info, header, "PUT").then(
+    httpUtil(api_path.account_url, null, account, header, "PUT").then(
       response => {
         response.json().then(response_json => {
           if (response_json.rtn !== 0) {
@@ -258,4 +270,140 @@ export const doUpdate = (updated_info, session_id) => dispatch => {
  */
 export const logout = () => {
   flushAccount();
+};
+
+/**
+ * 获得所有用户账户信息
+ */
+export const getAllUsers = session_id => {
+  return new Promise((resolve, reject) => {
+    if (!session_id) {
+      console.error("getAllUsers:session_id为空");
+      return reject(null);
+    }
+    let headers = {
+      session_id
+    };
+    httpUtil(api_path.findAllAccount_url, null, null, headers, "GET")
+      .then(response =>
+        response.json().then(response_json => {
+          if (response_json.rtn !== 0) {
+            console.error("get all users info failed===>", response_json.msg);
+            return reject(null);
+          } else {
+            console.log("get all users info success!===>", response_json.msg);
+            return resolve(response_json.data);
+          }
+        })
+      )
+      .catch(error => {
+        console.error("get all users info failed===>", error);
+        return reject(null);
+      });
+  });
+};
+
+export const frozeAccount = (session_id, account_id) => {
+  return new Promise((resolve, reject) => {
+    if (!session_id || !account_id) {
+      console.error(
+        "frozeAccount缺少数据:session_id=%s,account_id=%s",
+        session_id,
+        account_id
+      );
+      return reject(null);
+    }
+    let headers = {
+      session_id
+    };
+    let params = {
+      account_id
+    };
+    httpUtil(api_path.frozeAccount_url, params, null, headers, "GET")
+      .then(response =>
+        response.json().then(response_json => {
+          if (response_json.rtn !== 0) {
+            console.error("frozeAccount failed===>", response_json.msg);
+            return reject(null);
+          } else {
+            console.log("frozeAccount success!===>", response_json.msg);
+            return resolve(response_json.data);
+          }
+        })
+      )
+      .catch(error => {
+        console.error("frozeAccount failed===>", error);
+        return reject(null);
+      });
+  });
+};
+
+export const unFrozeAccount = (session_id, account_id) => {
+  return new Promise((resolve, reject) => {
+    if (!session_id || !account_id) {
+      console.error(
+        "unFrozeAccount缺少数据:session_id=%s,account_id=%s",
+        session_id,
+        account_id
+      );
+      return reject(null);
+    }
+    let headers = {
+      session_id
+    };
+    let params = {
+      account_id
+    };
+    httpUtil(api_path.unFrozeAccount_url, params, null, headers, "GET")
+      .then(response =>
+        response.json().then(response_json => {
+          if (response_json.rtn !== 0) {
+            console.error("unFrozeAccount failed===>", response_json.msg);
+            return reject(null);
+          } else {
+            console.log("unFrozeAccount success!===>", response_json.msg);
+            return resolve(response_json.data);
+          }
+        })
+      )
+      .catch(error => {
+        console.error("frozeAccount failed===>", error);
+        return reject(null);
+      });
+  });
+};
+
+export const deleteAccount = (session_id, account_id) => {
+  return new Promise((resolve, reject) => {
+    if (!session_id || !account_id) {
+      console.error(
+        "deleteAccount缺少数据:session_id=%s,account_id=%s",
+        session_id,
+        account_id
+      );
+      return reject(null);
+    }
+    let headers = {
+      session_id
+    };
+    let params = {
+      account_id
+    };
+    httpUtil(api_path.account_url, params, null, headers, "DELETE")
+      .then(response =>
+        response.json().then(response_json => {
+          if (response_json.rtn !== 0) {
+            console.error("delete account failed===>", response_json.msg);
+            return reject(null);
+          } else {
+            console.log("delete account success!===>", response_json.msg);
+            return resolve(response_json.data);
+          }
+        })
+      )
+      .catch(error => {
+        console.error("delete account failed===>", error);
+        return reject(null);
+      });
+  });
 };

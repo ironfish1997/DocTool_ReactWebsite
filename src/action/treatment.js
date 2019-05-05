@@ -140,8 +140,8 @@ export const doAddTreatmentRecord = (
               dispatch(doAddTreatmentFailed(response_json.msg));
               return reject("新增就诊信息失败");
             }
-            console.log("新增就诊信息成功");
             dispatch(doAddTreatmentSuccess(response_json.data));
+            console.log("新增就诊信息成功");
             return resolve("新增就诊信息成功");
           })
           .catch(error => {
