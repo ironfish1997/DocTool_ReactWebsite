@@ -1,6 +1,12 @@
 export const account_url = "http://10.100.50.247:8082/account";
 export const login_url = "http://10.100.50.247:8082/account/login";
 export const check_login_url = "http://10.100.50.247:8082/account/logincheck";
+export const findAllAccount_url =
+  "http://10.100.50.247:8082/account/findAllAccount";
+export const frozeAccount_url =
+  "http://10.100.50.247:8082/account/frozeAccount";
+export const unFrozeAccount_url =
+  "http://10.100.50.247:8082/account/unFrozeAccount";
 export const baidu_ip_location = "http://api.map.baidu.com/location/ip";
 export const patient_url = "http://10.100.50.247:8081/patient";
 export const getAllPatient_url =
