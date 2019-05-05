@@ -27,7 +27,7 @@ const store = createStore(
   /* preloadedState, */ composeEnhancers(applyMiddleware(...middleware))
 );
 // sagaMiddleware.run
-console.log("Initial state：", store.getState());
+// console.log("Initial state：", store.getState());
 
 ReactDOM.render(
   <AppContainer>

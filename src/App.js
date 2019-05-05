@@ -3,6 +3,7 @@ import { Route, Redirect, Switch } from "react-router-dom";
 import DocumentTitle from "react-document-title";
 import SiderCustom from "./components/SiderCustom";
 import HeaderCustom from "./components/HeaderCustom";
+// import { ThemePicker } from "@/components/widget";
 import { MedicineItemPanel } from "./components/medicineItemPanel";
 import {
   PatientInfoPanel,
@@ -27,12 +28,6 @@ class App extends Component {
       collapsed: true
     };
   }
-
-  _setTitle = ({ title }) => {
-    if (this.state.title === title) return;
-    this.setState({ title });
-  };
-
   render() {
     const { title } = this.state;
     const { match } = this.props;
@@ -44,9 +39,8 @@ class App extends Component {
             collapsed={this.state.collapsed}
             user={this.props.account.user}
           />
-          {/* <ThemePicker /> */}
           <Layout style={{ flexDirection: "colomn" }} hasSider>
-            <SiderCustom collapsed={this.state.collapsed} />
+            <SiderCustom />
             <Layout>
               <Content style={{ overflow: "initial", flex: "1 1 0" }}>
                 <Switch>
